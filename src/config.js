@@ -1,5 +1,5 @@
 export const featureToggle = {
-  app: 'imperative' // 'imperative' or 'functional'
+  app: 'functionnal' // 'imperative' or 'functional'
 }
 
 export const restApi = {

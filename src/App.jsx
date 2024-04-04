@@ -1,5 +1,5 @@
 import React from 'react'
-import { BrowserRouter, Route } from 'react-router-dom'
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import 'todomvc-app-css/index.css'
 
 import * as Config from './config'
@@ -9,7 +9,7 @@ import TodoListPageImperative from './imperative/TodoListPage'
 import FooterFunctional from './functional/Footer'
 import TodoListPageFunctional from './functional/TodoListPage'
 
-export default function App () {
+export default function App() {
   if (Config.featureToggle.app === 'imperative') {
     return <ImperativeApp />
   } else {
@@ -17,12 +17,14 @@ export default function App () {
   }
 }
 
-function ImperativeApp () {
+function ImperativeApp() {
   return (
     <div className='app'>
       <div className='todoapp'>
         <BrowserRouter>
-          <Route path='/:filter?' component={TodoListPageImperative} />
+          <Routes>
+            <Route path='/:filter?' component={TodoListPageImperative} />
+          </Routes>
         </BrowserRouter>
       </div>
 
@@ -31,16 +33,18 @@ function ImperativeApp () {
   )
 }
 
-function FunctionalApp () {
+function FunctionalApp() {
   return (
     <div className='app'>
       <div className='todoapp'>
         <BrowserRouter>
-          <Route path='/:filter?' component={TodoListPageFunctional} />
+          <Routes>
+            <Route path='/:filter?' component={TodoListPageFunctional} />
+          </Routes>
         </BrowserRouter>
-      </div>
+      </div >
 
       <FooterFunctional />
-    </div>
+    </div >
   )
 }
