@@ -17,6 +17,7 @@ export default function TodoListComponent ({
   const left = TodoList.countTodosLeft(todos)
   const isAnyDone = left < todos.length
   const areAllDone = left === todos.length
+  const classIsActive =(data) => (data.isActive ? "selected" : "none")
 
   return (
     <React.Fragment>
@@ -55,17 +56,17 @@ export default function TodoListComponent ({
         </span>
         <ul className='filters'>
           <li>
-            <NavLink exact={true} to='/' activeClassName='selected'>
+            <NavLink to='/' className={classIsActive}>
               All
             </NavLink>
           </li>
           <li>
-            <NavLink to='/active' activeClassName='selected'>
+            <NavLink to='/active' className={classIsActive}>
               Active
             </NavLink>
           </li>
           <li>
-            <NavLink to='/completed' activeClassName='selected'>
+            <NavLink to='/completed' className={classIsActive}>
               Completed
             </NavLink>
           </li>

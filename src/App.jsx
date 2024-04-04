@@ -17,13 +17,16 @@ export default function App() {
   }
 }
 
+
+
+
 function ImperativeApp() {
   return (
     <div className='app'>
       <div className='todoapp'>
         <BrowserRouter>
           <Routes>
-            <Route path='/:filter?' component={TodoListPageImperative} />
+            <Route path='/:filter?' element={<TodoListPageImperative/>} />
           </Routes>
         </BrowserRouter>
       </div>
@@ -39,7 +42,7 @@ function FunctionalApp() {
       <div className='todoapp'>
         <BrowserRouter>
           <Routes>
-            <Route path='/:filter?' component={TodoListPageFunctional} />
+            <Route path='/:filter?' element={<TodoListPageFunctional/>} />
           </Routes>
         </BrowserRouter>
       </div >

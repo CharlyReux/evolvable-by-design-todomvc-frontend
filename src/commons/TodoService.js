@@ -15,7 +15,7 @@ export default class TodoService {
 
   async fetch () {
     const response = await this._httpCaller().get('/todos')
-    const untypedTodos = response.data
+    const untypedTodos = response.data["todos"]
     const todos = untypedTodos.map(
       todo => new Todo(todo.title, todo.completed, todo.id)
     )

@@ -10,7 +10,9 @@ So, in the [src](/src) directory you can find three folders:
 - [imperative](/src/react-imperative) that uses the implementation of the view with React classes
 - [commons](/src/commons) that contains all the code that is common to both version, which includes controllers and models
 
-## setup
+
+
+## Setup
 ```
 npm install
 npm run dev

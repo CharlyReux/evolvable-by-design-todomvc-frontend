@@ -58,17 +58,17 @@ export default class TodoListComponent extends React.Component {
           </span>
           <ul className='filters'>
             <li>
-              <NavLink exact={true} to='/' activeClassName='selected'>
+              <NavLink to='/' className={classIsActive}>
                 All
               </NavLink>
             </li>
             <li>
-              <NavLink to='/active' activeClassName='selected'>
+              <NavLink to='/active' className={classIsActive}>
                 Active
               </NavLink>
             </li>
             <li>
-              <NavLink to='/completed' activeClassName='selected'>
+              <NavLink to='/completed' className={classIsActive}>
                 Completed
               </NavLink>
             </li>
