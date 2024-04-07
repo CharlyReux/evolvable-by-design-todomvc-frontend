@@ -24,7 +24,7 @@ export default function TodoItem (props) {
 
   return (
     <li
-      onDoubleClick={() => setEditing(false)}
+      onDoubleClick={() => setEditing(true)}
       className={`${isEditing ? 'editing' : ''} ${
         todo.completed ? 'completed' : ''
       }`}

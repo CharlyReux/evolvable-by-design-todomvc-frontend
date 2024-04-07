@@ -9,6 +9,8 @@ export default class TodoListPage extends React.Component {
     super(props)
 
     this.todoController = new TodoService(Config.restApi.url)
+    console.log('TodoListPage constructor')
+    console.log(props.match)
     this.state = this.getInitialState(props)
   }
 

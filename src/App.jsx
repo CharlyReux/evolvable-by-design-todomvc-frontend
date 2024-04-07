@@ -26,7 +26,7 @@ function ImperativeApp() {
       <div className='todoapp'>
         <BrowserRouter>
           <Routes>
-            <Route path='/:filter?' element={<TodoListPageImperative/>} />
+            <Route path='/:filter?' render={(props) => <TodoListPageImperative {...props}/>} Component={TodoListPageImperative}  />
           </Routes>
         </BrowserRouter>
       </div>
