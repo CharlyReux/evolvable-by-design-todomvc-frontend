@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react'
 
-import { onEnter } from '../commons/utils'
+import { onEnter } from './commons/utils'
 
 export default function TodoInput ({ onAddTodo }) {
   const [value, setValue] = useState('')

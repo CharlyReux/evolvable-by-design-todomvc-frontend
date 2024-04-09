@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react'
 
-import { onEnter as onEnterUtils } from '../commons/utils'
+import { onEnter as onEnterUtils } from './commons/utils'
 import WhenClickOutside from './WhenClickOutside'
 
 // props: { todo, onDone, onDelete, onChange }

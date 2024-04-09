@@ -1,7 +1,7 @@
 import React from 'react'
 import { NavLink } from 'react-router-dom'
 
-import TodoList from '../commons/TodoList'
+import TodoList from './commons/TodoList'
 import TodoInput from './TodoInput'
 import TodoItem from './TodoItem'
 

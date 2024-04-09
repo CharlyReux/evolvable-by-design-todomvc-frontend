@@ -1,9 +1,9 @@
 import React, { useMemo, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 
-import * as Config from '../config'
+import * as Config from './config'
 import TodoList from './TodoList'
-import TodoService from '../commons/TodoService'
+import TodoService from './commons/TodoService'
 
 export default function TodoListPage () {
   const [todoService] = useState(new TodoService(Config.restApi.url))
