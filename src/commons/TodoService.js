@@ -56,13 +56,19 @@ export default class TodoService {
       .map(relation => relation.operation)
       .getOrThrow(() => new Error('REST API operation not available'))
 
-    const response = await operation.invoke({ ...todo.data, ...newValue })
+    const response = await operation.invoke({ ...newValue })
     const newTodoValue = response.data
 
     return this.todos
   }
 
   async delete(todo) {
+    const deleteOperation = todo
+    .getRelation("http://evolvable-by-design.github.io/vocabs/todomvc#rel/delete", 1)
+    .map(relation => relation.operation)
+    .getOrThrow(() => new Error('REST API operation not available'))
+
+    const response = await deleteOperation.invoke()
     
     return this.todos
   }
