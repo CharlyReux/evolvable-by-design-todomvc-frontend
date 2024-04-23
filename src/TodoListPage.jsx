@@ -6,9 +6,9 @@ import TodoList from './TodoList'
 import TodoService from './commons/TodoService'
 
 export default function TodoListPage () {
-  const [todoService] = useState(new TodoService(Config.restApi.url))
+  const [todoService] = useState()
 
-  const [todos, setTodos] = useState(todoService.getTodos())
+  const [todos, setTodos] = useState([])
   const { filter } = useParams()
 
   const todosToDisplay = useMemo(() => todos.withStatus(filter), [
@@ -17,7 +17,7 @@ export default function TodoListPage () {
   ])
 
   useEffect(() => {
-    todoService.fetch().then(setTodos)
+    TodoService.forApiAtUrl(Config.restApi.url).fetch().then(setTodos)
   }, [])
 
   const createTodo = title =>
@@ -32,12 +32,18 @@ export default function TodoListPage () {
   }
 
   return (
-    <TodoList
-      todos={todosToDisplay}
-      createTodo={createTodo}
-      deleteTodo={deleteTodo}
-      clearCompletedTodos={clearCompletedTodos}
-      switchTodoCompletedStatus={switchTodoCompletedStatus}
-    />
-  )
+    <>
+      {todoService ? (
+        <TodoList
+          todos={todosToDisplay}
+          createTodo={createTodo}
+          deleteTodo={deleteTodo}
+          clearCompletedTodos={clearCompletedTodos}
+          switchTodoCompletedStatus={switchTodoCompletedStatus}
+        />
+      ) : (
+        <p>loading</p>
+      )}
+    </>
+  );
 }
