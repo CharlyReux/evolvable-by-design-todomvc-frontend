@@ -50,5 +50,10 @@ export default class TodoService {
     this.todos = this.todos.deleteMany(status)
     return this.todos
   }
+  async switchTodoCompletedStatus(todo) {
+    const newValue =
+      todo.completed === true ? todo.uncomplete() : todo.complete()
+    return this.updateTodo(newValue)
+  }
 
 }

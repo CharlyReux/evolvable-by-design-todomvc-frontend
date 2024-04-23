@@ -26,9 +26,7 @@ export default function TodoListPage () {
   const clearCompletedTodos = () =>
     todoService.deleteMany('completed').then(setTodos)
   const switchTodoCompletedStatus = todo => {
-    const newValue =
-      todo.completed === true ? todo.uncomplete() : todo.complete()
-    todoService.updateTodo(newValue).then(setTodos)
+    todoService.switchTodoCompletedStatus(todo).then(setTodos)
   }
 
   return (
