@@ -24,7 +24,6 @@ export default function TodoListComponent({
   createTodo,
   deleteTodo,
   clearCompletedTodos,
-  switchStatusOfAllTodos,
   switchTodoCompletedStatus
 }) {
   const navigate = useNavigate();
@@ -74,7 +73,7 @@ export default function TodoListComponent({
           <BottomNavigationAction value="active" label="Active" icon={<Unpublished />} />
           <BottomNavigationAction value="completed" label="Completed" icon={<CheckCircle />} />
         </BottomNavigation>
-        <Tooltip title="Remove all done">
+        <Tooltip title="Remove all completed todos">
           <IconButton variant="contained" onClick={clearCompletedTodos}>
             <RemoveDoneIcon />
           </IconButton>
