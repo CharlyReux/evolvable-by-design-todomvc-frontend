@@ -1,10 +1,9 @@
 import React from 'react'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import 'todomvc-app-css/index.css'
+import './App.css'
 
-import * as Config from './config'
 
-import Footer from './Footer'
 import TodoListPage from './TodoListPage'
 
 export default function App() {
@@ -18,7 +17,6 @@ export default function App() {
         </BrowserRouter>
       </div >
 
-      <Footer />
     </div >
   )
 }

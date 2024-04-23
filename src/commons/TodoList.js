@@ -1,13 +1,21 @@
+import Todo from "./Todo"
+
 export default class TodoList {
-  constructor (initialValues) {
-    this.values = initialValues || []
+  constructor(initialValues) {
+    if (initialValues) {
+      this.values = initialValues.map(
+        todo => new Todo(todo.title, todo.completed, todo.id)
+      )
+    } else {
+      this.values = []
+    }
   }
 
-  add (todo) {
-    return new TodoList(this.values.concat(todo))
+  add(todo) {
+    return new TodoList(this.values.concat(new Todo(todo.title, todo.completed, todo.id)))
   }
 
-  updateTodo (newValue) {
+  updateTodo(newValue) {
     const newTodos = [].concat(this.values)
     const indexOfTodo = this.values.indexOf(
       this.values.find(todo => todo.id === newValue.id)
@@ -16,7 +24,7 @@ export default class TodoList {
     return new TodoList(newTodos)
   }
 
-  delete (id) {
+  delete(id) {
     const valuesCopy = [].concat(this.values)
     valuesCopy.splice(
       valuesCopy.indexOf(valuesCopy.find(todo => todo.id === id)),
@@ -26,7 +34,7 @@ export default class TodoList {
   }
 
   // status must be 'all' or 'completed' or 'active'
-  deleteMany (status) {
+  deleteMany(status) {
     if (status.toLowerCase() === 'all') {
       return new TodoList([])
     } else {
@@ -38,11 +46,11 @@ export default class TodoList {
     }
   }
 
-  completeAll () {
+  completeAll() {
     return new TodoList(this.values.map(todo => todo.complete()))
   }
 
-  uncompleteAll () {
+  uncompleteAll() {
     return new TodoList(this.values.map(todo => todo.uncomplete()))
   }
 
@@ -50,7 +58,7 @@ export default class TodoList {
    *
    * @param {*} status: either 'active', 'completed', or 'all'
    */
-  withStatus (status) {
+  withStatus(status) {
     if (status === 'active') {
       return this.values.filter(todo => !todo.completed)
     } else if (status === 'completed') {
@@ -60,7 +68,7 @@ export default class TodoList {
     }
   }
 
-  static countTodosLeft (todos) {
+  static countTodosLeft(todos) {
     return todos.reduce((count, todo) => count + (todo.completed ? 0 : 1), 0)
   }
 }

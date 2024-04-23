@@ -1,9 +1,15 @@
 import React, { useState, useCallback } from 'react'
 
-import { onEnter } from './commons/utils'
 
 export default function TodoInput ({ onAddTodo }) {
   const [value, setValue] = useState('')
+  
+  const onEnter = (event, callback) =>{
+    if (event.key === 'Enter') {
+      event.preventDefault()
+      callback(event)
+    }
+  }
 
   const onKeyPress = useCallback(
     event => {
@@ -21,7 +27,7 @@ export default function TodoInput ({ onAddTodo }) {
     <input
       className='new-todo'
       placeholder='What needs to be done?'
-      onKeyPress={onKeyPress}
+      onKeyDown={onKeyPress}
       value={value}
       onChange={e => setValue(e.target.value)}
     />

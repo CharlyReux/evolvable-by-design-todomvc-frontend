@@ -1,4 +1,3 @@
-import { guid } from './utils'
 
 /* 
   Strong design decision: the data model is immutable. 
@@ -6,7 +5,7 @@ import { guid } from './utils'
 */
 export default class Todo {
   constructor (title, completed, id) {
-    this.id = id || guid()
+    this.id = id || crypto.randomUUID()
     this.title = title
     this.completed = completed || false
   }

@@ -21,16 +21,14 @@ export default function TodoListPage () {
   }, [])
 
   const createTodo = title =>
-    todoService.add(title).then(({ allTodos }) => setTodos(allTodos))
+    todoService.add(title).then(( allTodos ) => setTodos(allTodos))
   const deleteTodo = id => todoService.delete(id).then(setTodos)
   const clearCompletedTodos = () =>
     todoService.deleteMany('completed').then(setTodos)
-  const switchStatusOfAllTodos = () =>
-    todoService.switchStatusOfAllTodos().then(setTodos)
-  const updateTodoTitle = (todo, newTitle) => {
+ /*  const updateTodoTitle = (todo, newTitle) => {
     const newValue = todo.updateTitle(newTitle)
     todoService.updateTodo(newValue).then(setTodos)
-  }
+  } */
   const switchTodoCompletedStatus = todo => {
     const newValue =
       todo.completed === true ? todo.uncomplete() : todo.complete()
@@ -43,8 +41,6 @@ export default function TodoListPage () {
       createTodo={createTodo}
       deleteTodo={deleteTodo}
       clearCompletedTodos={clearCompletedTodos}
-      switchStatusOfAllTodos={switchStatusOfAllTodos}
-      updateTodoTitle={updateTodoTitle}
       switchTodoCompletedStatus={switchTodoCompletedStatus}
     />
   )
