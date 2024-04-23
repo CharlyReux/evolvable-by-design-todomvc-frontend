@@ -28,27 +28,33 @@ export default class TodoService {
   }
 
   async fetch() {
+    return this.todos
 
   }
 
   async add(title) {
+    return this.todos
 
   }
 
   async updateTodo(newValue) {
+    return this.todos
 
   }
 
   async delete(id) {
+    return this.todos
 
   }
 
   // status must be 'all' or 'completed' or 'active'
   async deleteMany(status) {
+    return this.todos
 
   }
 
   async switchTodoCompletedStatus(todo) {
+    return this.todos
 
   }
 
