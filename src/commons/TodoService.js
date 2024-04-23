@@ -8,6 +8,12 @@ import Pivo from '@evolvable-by-design/pivo'
 export default class TodoService {
   constructor(documentation) {
     this.pivo = new Pivo(documentation)
+    this.todos = []
+    this.todosResources = undefined
+
+    this.fetchOperation = this.pivo
+      .get("http://evolvable-by-design.github.io/vocabs/todomvc#TodoCollection")
+      .getOrThrow(() => new Error('REST API operation not available'))
   }
 
   static async forApiAtUrl(url) {
@@ -27,19 +33,33 @@ export default class TodoService {
     return this.todos
   }
 
-  async fetch() {
+  async fetch(filter) {
+    const parameters = filter ? { ["http://evolvable-by-design.github.io/vocabs/todomvc#status"]: filter } : {}
+    const response = await this.fetchOperation.invoke(parameters)
+    this.todosResources = response.data
+    this.todos = await this.todosResources.getArray("http://evolvable-by-design.github.io/vocabs/todomvc#Todos")
     return this.todos
-
   }
 
   async add(title) {
+    const addOperation = this.todosResources.getRelation("http://evolvable-by-design.github.io/vocabs/todomvc#rel/create",1)
+      .map(relation => relation.operation)
+      .getOrThrow(() => new Error('Impossible to get the add operation'))
+    const result = addOperation.invoke({ ["http://schema.org/name"]: title })
+    this.todos = [...this.todos].concat([result])
     return this.todos
-
   }
 
-  async updateTodo(newValue) {
-    return this.todos
+  async updateTodo(todo,newValue) {
+    const operation = todo
+      .getRelation("http://evolvable-by-design.github.io/vocabs/todomvc#rel/create", 1)
+      .map(relation => relation.operation)
+      .getOrThrow(() => new Error('REST API operation not available'))
 
+    const response = await operation.invoke({ ...todo.data, ...newValue })
+    const newTodoValue = response.data
+
+    return this.todos
   }
 
   async delete(id) {
@@ -48,14 +68,13 @@ export default class TodoService {
   }
 
   // status must be 'all' or 'completed' or 'active'
-  async deleteMany(status) {
+  async deleteCompleted(status) {
     return this.todos
 
   }
 
   async switchTodoCompletedStatus(todo) {
     return this.todos
-
   }
 
 }

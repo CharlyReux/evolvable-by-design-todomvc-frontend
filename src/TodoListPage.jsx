@@ -7,15 +7,26 @@ import TodoService from './commons/TodoService'
 
 export default function TodoListPage() {
   const [todoService, setTodoService] = useState()
-
-  const [todos, setTodos] = useState([])
-  const { filter } = useParams()
-
-
-
   useEffect(() => {
     TodoService.forApiAtUrl(Config.restApi.url).then(setTodoService)
   }, [])
+
+  return (
+    <>
+      {todoService ? (
+        <TodoListInstantiated todoService={todoService} />
+      ) : (
+        <p>loading</p>
+      )}
+    </>
+  );
+}
+
+
+function TodoListInstantiated({ todoService }) {
+  const [todos, setTodos] = useState([])
+  const { filter } = useParams()
+
   useEffect(() => {
     todoService.fetch(filter).then(setTodos)
   }, [filter, todoService])
@@ -26,24 +37,18 @@ export default function TodoListPage() {
   const clearCompletedTodos = () =>
     todoService.deleteMany('completed').then(setTodos)
   const switchTodoCompletedStatus = todo => {
-    const newValue =
-      todo.completed === true ? todo.uncomplete() : todo.complete()
-    todoService.updateTodo(newValue).then(setTodos)
+    todoService.switchTodoCompletedStatus(todo).then(setTodos)
   }
+  useEffect(() => {
+    todoService.fetch(filter).then(setTodos)
+  }, [filter, todoService])
 
-  return (
-    <>
-      {todoService ? (
-        <TodoList
-          todos={todos}
-          createTodo={createTodo}
-          deleteTodo={deleteTodo}
-          clearCompletedTodos={clearCompletedTodos}
-          switchTodoCompletedStatus={switchTodoCompletedStatus}
-        />
-      ) : (
-        <p>loading</p>
-      )}
-    </>
-  );
+
+  return <TodoList
+    todos={todos}
+    createTodo={createTodo}
+    deleteTodo={deleteTodo}
+    clearCompletedTodos={clearCompletedTodos}
+    switchTodoCompletedStatus={switchTodoCompletedStatus}
+  />
 }
