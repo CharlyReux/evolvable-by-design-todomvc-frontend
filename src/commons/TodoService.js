@@ -62,9 +62,9 @@ export default class TodoService {
     return this.todos
   }
 
-  async delete(id) {
+  async delete(todo) {
+    
     return this.todos
-
   }
 
   // status must be 'all' or 'completed' or 'active'
