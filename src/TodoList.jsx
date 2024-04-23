@@ -24,7 +24,6 @@ export default function TodoListComponent({
   createTodo,
   deleteTodo,
   clearCompletedTodos,
-  switchStatusOfAllTodos,
   switchTodoCompletedStatus
 }) {
   const navigate = useNavigate();
