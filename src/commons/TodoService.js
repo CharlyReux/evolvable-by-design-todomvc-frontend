@@ -37,8 +37,8 @@ export default class TodoService {
     return this.todos
   }
 
-  async delete(id) {
-    const response = await axios.delete(`${this.baseApiUrl}/todo/${id}`)
+  async delete(todo) {
+    const response = await axios.delete(`${this.baseApiUrl}/todo/${todo.id}`)
     const indexOfTodo = this.todos.findIndex(todo => todo.id === id)
 
     const temporaryTodos = [...this.todos]

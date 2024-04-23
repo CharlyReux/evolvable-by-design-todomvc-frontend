@@ -19,7 +19,7 @@ export default function TodoListPage () {
 
   const createTodo = title =>
     todoService.add(title).then(setTodos)
-  const deleteTodo = id => todoService.delete(id).then(setTodos)
+  const deleteTodo = todo => todoService.delete(id).then(setTodos)
   const clearCompletedTodos = () =>
     todoService.deleteCompleted('completed').then(setTodos)
   const switchTodoCompletedStatus = todo => {
