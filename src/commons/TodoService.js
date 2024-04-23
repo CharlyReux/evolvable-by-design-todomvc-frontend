@@ -25,7 +25,7 @@ export default class TodoService {
     return this.todos
   }
 
-  async updateTodo(newValue) {
+  async updateTodo(todo, newValue) {
     const response = await axios.put(`${this.baseApiUrl}/todo/${newValue.id}`, {
       title: newValue.title,
       completed: newValue.completed
@@ -56,8 +56,9 @@ export default class TodoService {
   }
 
   async switchTodoCompletedStatus(todo) {
-    todo.completed = !todo.completed
-    return this.updateTodo(todo)
+    newTodo = { ...todo }
+    newTodo.completed = !newTodo.completed
+    return this.updateTodo(todo,newTodo)
   }
 
 }
