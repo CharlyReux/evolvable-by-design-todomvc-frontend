@@ -40,7 +40,7 @@ export default function TodoListComponent({
             key={todo.id}
             secondaryAction={
               <div>
-                <IconButton edge="end" aria-label="delete" onClick={() => deleteTodo((todo.id))}>
+                <IconButton edge="end" aria-label="delete" onClick={() => deleteTodo((todo))}>
                   <DeleteIcon />
                 </IconButton>
                 <IconButton edge="end" aria-label="complete" onClick={() => switchTodoCompletedStatus(todo)}>

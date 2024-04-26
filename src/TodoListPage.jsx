@@ -11,27 +11,24 @@ export default function TodoListPage () {
   const [todos, setTodos] = useState(todoService.getTodos())
   const { filter } = useParams()
 
-  const todosToDisplay = useMemo(() => todos.withStatus(filter), [
-    todos,
-    filter
-  ])
 
   useEffect(() => {
-    todoService.fetch().then(setTodos)
-  }, [])
+    todoService.fetch(filter).then(setTodos)
+    console.log('fetching todos')
+  }, [filter])
 
   const createTodo = title =>
-    todoService.add(title).then(( allTodos ) => setTodos(allTodos))
-  const deleteTodo = id => todoService.delete(id).then(setTodos)
+    todoService.add(title).then(setTodos)
+  const deleteTodo = todo => todoService.delete(id).then(setTodos)
   const clearCompletedTodos = () =>
-    todoService.deleteMany('completed').then(setTodos)
+    todoService.deleteCompleted('completed').then(setTodos)
   const switchTodoCompletedStatus = todo => {
     todoService.switchTodoCompletedStatus(todo).then(setTodos)
   }
 
   return (
     <TodoList
-      todos={todosToDisplay}
+      todos={todos}
       createTodo={createTodo}
       deleteTodo={deleteTodo}
       clearCompletedTodos={clearCompletedTodos}
