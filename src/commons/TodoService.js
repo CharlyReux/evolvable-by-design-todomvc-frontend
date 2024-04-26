@@ -39,7 +39,7 @@ export default class TodoService {
 
   async delete(todo) {
     const response = await axios.delete(`${this.baseApiUrl}/todo/${todo.id}`)
-    const indexOfTodo = this.todos.findIndex(todo => todo.id === id)
+    const indexOfTodo = this.todos.findIndex(currentTodo => currentTodo.id === todo.id)
 
     const temporaryTodos = [...this.todos]
     temporaryTodos.splice(indexOfTodo, 1)
@@ -54,14 +54,9 @@ export default class TodoService {
     )
     return this.todos
   }
-  async switchTodoCompletedStatus(todo) {
-    const newValue =
-      todo.completed === true ? todo.uncomplete() : todo.complete()
-    return this.updateTodo(newValue)
-  }
 
   async switchTodoCompletedStatus(todo) {
-    newTodo = { ...todo }
+    const newTodo = { ...todo }
     newTodo.completed = !newTodo.completed
     return this.updateTodo(todo,newTodo)
   }
