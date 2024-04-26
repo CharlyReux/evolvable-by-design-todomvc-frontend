@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 
 import List from '@mui/material/List';
@@ -17,6 +17,9 @@ import Tooltip from '@mui/material/Tooltip';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Typography from '@mui/material/Typography';
 
+import WithSemanticDataRequired from './commons/with-semantic-data-required'
+
+
 import TodoInput from './TodoInput'
 
 export default function TodoListComponent({
@@ -27,6 +30,7 @@ export default function TodoListComponent({
   switchTodoCompletedStatus
 }) {
   const navigate = useNavigate();
+
   return (
     <>
       <header className='header'>
@@ -36,29 +40,42 @@ export default function TodoListComponent({
 
       <List sx={{ width: '100%' }}>
         {todos.map((todo) => (
-          <ListItem
-            key={todo.id}
-            secondaryAction={
-              <div>
-                <IconButton edge="end" aria-label="delete" onClick={() => deleteTodo((todo.id))}>
-                  <DeleteIcon />
-                </IconButton>
-                <IconButton edge="end" aria-label="complete" onClick={() => switchTodoCompletedStatus(todo)}>
-                  {todo.completed ?
-                    <CheckBoxIcon />
-                    :
-                    <CheckBoxOutlineBlankIcon />
-                  }
-                </IconButton>
-              </div>
-            }
+          <WithSemanticDataRequired
+            data={todo}
+            mappings={{
+              id: "http://evolvable-by-design.github.io/vocabs/todomvc#todoId",
+              title: "http://schema.org/name",
+              completed: "http://evolvable-by-design.github.io/vocabs/todomvc#completed"
+            }}
+            loader={<div>Loading...</div>}>
 
-          >
-            <ListItemText disableTypography
-              id={todo.id} primary={
-                <Typography className={todo.completed ? 'text-strike' : null}>{todo.title}</Typography>
-              } />
-          </ListItem>
+            {({ id, title, completed }) => (
+              <ListItem
+                key={id}
+                secondaryAction={
+                  <div>
+                    <IconButton edge="end" aria-label="delete" onClick={() => deleteTodo(todo)}>
+                      <DeleteIcon />
+                    </IconButton>
+                    <IconButton edge="end" aria-label="complete" onClick={() => switchTodoCompletedStatus(todo)}>
+                      {completed ?
+                        <CheckBoxIcon />
+                        :
+                        <CheckBoxOutlineBlankIcon />
+                      }
+                    </IconButton>
+                  </div>
+                }
+
+              >
+                <ListItemText disableTypography
+                  id={id} primary={
+
+                    <Typography className={completed ? 'text-strike' : null}>{title}</Typography>
+                  } />
+              </ListItem>
+            )}
+          </WithSemanticDataRequired>
         ))}
       </List>
 

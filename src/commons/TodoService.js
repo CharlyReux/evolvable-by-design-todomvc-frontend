@@ -42,45 +42,57 @@ export default class TodoService {
   }
 
   async add(title) {
-    const addOperation = this.todosResources.getRelation("http://evolvable-by-design.github.io/vocabs/todomvc#rel/create",1)
+    const addOperation = this.todosResources.getRelation("http://evolvable-by-design.github.io/vocabs/todomvc#rel/create", 1)
       .map(relation => relation.operation)
       .getOrThrow(() => new Error('Impossible to get the add operation'))
-    const result = addOperation.invoke({ ["http://schema.org/name"]: title })
-    this.todos = [...this.todos].concat([result])
+    const result = await addOperation.invoke({ ["http://schema.org/name"]: title })
+    const newTodoValue = result.data
+    this.todos = [...this.todos].concat([newTodoValue])
     return this.todos
   }
 
-  async updateTodo(todo,newValue) {
+  async updateTodo(todo, newValue) {
     const operation = todo
-      .getRelation("http://evolvable-by-design.github.io/vocabs/todomvc#rel/create", 1)
+      .getRelation("http://evolvable-by-design.github.io/vocabs/todomvc#rel/update", 1)
       .map(relation => relation.operation)
       .getOrThrow(() => new Error('REST API operation not available'))
 
-    const response = await operation.invoke({ ...newValue })
-    const newTodoValue = response.data
+    await operation.invoke({ ...todo.data, ...newValue })
+    
 
-    return this.todos
+    return this.fetch()
   }
 
   async delete(todo) {
+    console.log(todo)
     const deleteOperation = todo
-    .getRelation("http://evolvable-by-design.github.io/vocabs/todomvc#rel/delete", 1)
-    .map(relation => relation.operation)
-    .getOrThrow(() => new Error('REST API operation not available'))
+      .getRelation("http://evolvable-by-design.github.io/vocabs/todomvc#rel/delete", 1)
+      .map(relation => relation.operation)
+      .getOrThrow(() => new Error('REST API operation not available'))
 
-    const response = await deleteOperation.invoke()
-    
+    await deleteOperation.invoke()
+    this.todos = [...this.todos.filter(t => t !== todo)]
     return this.todos
   }
 
   // status must be 'all' or 'completed' or 'active'
-  async deleteCompleted(status) {
-    return this.todos
+  async deleteCompleted() {
+    console.log(this.todosResources)
+    const operation = this.todosResources
+    .getRelation("http://evolvable-by-design.github.io/vocabs/todomvc#rel/deleteMany",1)
+    .map(relation => relation.operation)
+    .getOrThrow(() => new Error('REST API operation not available'))
 
+    operation.invoke({ ["http://evolvable-by-design.github.io/vocabs/todomvc#status"]: "completed" })
+
+    return this.fetch()
   }
 
   async switchTodoCompletedStatus(todo) {
-    return this.todos
+    const formerStatus = await todo.get("http://evolvable-by-design.github.io/vocabs/todomvc#completed") 
+    const newStatus = {["http://evolvable-by-design.github.io/vocabs/todomvc#completed"]: !formerStatus.data}
+    
+    return this.updateTodo(todo, newStatus)
   }
 
 }

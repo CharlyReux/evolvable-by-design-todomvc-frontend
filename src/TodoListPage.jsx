@@ -32,10 +32,10 @@ function TodoListInstantiated({ todoService }) {
   }, [filter, todoService])
 
   const createTodo = title =>
-    todoService.add(title).then((allTodos) => setTodos(allTodos))
-  const deleteTodo = id => todoService.delete(id).then(setTodos)
+    todoService.add(title).then(setTodos)
+  const deleteTodo = todo => todoService.delete(todo).then(setTodos)
   const clearCompletedTodos = () =>
-    todoService.deleteMany('completed').then(setTodos)
+    todoService.deleteCompleted().then(setTodos)
   const switchTodoCompletedStatus = todo => {
     todoService.switchTodoCompletedStatus(todo).then(setTodos)
   }
