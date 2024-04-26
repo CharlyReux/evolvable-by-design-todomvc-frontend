@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 
 import List from '@mui/material/List';
@@ -17,16 +17,21 @@ import Tooltip from '@mui/material/Tooltip';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Typography from '@mui/material/Typography';
 
+
 import TodoInput from './TodoInput'
 
 export default function TodoListComponent({
   todos,
   createTodo,
   deleteTodo,
-  clearCompletedTodos,
-  switchTodoCompletedStatus
+  clearTodos,
+  switchTodoCompletedStatus,
+  filter
 }) {
   const navigate = useNavigate();
+
+
+
   return (
     <>
       <header className='header'>
@@ -35,12 +40,12 @@ export default function TodoListComponent({
       </header>
 
       <List sx={{ width: '100%' }}>
-        {todos.map((todo) => (
+      {todos.map((todo) => (
           <ListItem
             key={todo.id}
             secondaryAction={
               <div>
-                <IconButton edge="end" aria-label="delete" onClick={() => deleteTodo(todo)}>
+                <IconButton edge="end" aria-label="delete" onClick={() => deleteTodo((todo))}>
                   <DeleteIcon />
                 </IconButton>
                 <IconButton edge="end" aria-label="complete" onClick={() => switchTodoCompletedStatus(todo)}>
@@ -73,8 +78,8 @@ export default function TodoListComponent({
           <BottomNavigationAction value="active" label="Active" icon={<Unpublished />} />
           <BottomNavigationAction value="completed" label="Completed" icon={<CheckCircle />} />
         </BottomNavigation>
-        <Tooltip title="Remove all completed todos">
-          <IconButton variant="contained" onClick={clearCompletedTodos}>
+        <Tooltip title="Remove all todos in the current category">
+          <IconButton variant="contained" onClick={clearTodos(filter)}>
             <RemoveDoneIcon />
           </IconButton>
         </Tooltip>

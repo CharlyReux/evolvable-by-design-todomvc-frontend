@@ -1,3 +1,1 @@
-export const restApi = {
-  url: 'http://localhost:8080/rest'
-}
+export const API_URL = 'http://localhost:8080/rest'

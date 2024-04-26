@@ -5,34 +5,47 @@ import * as Config from './config'
 import TodoList from './TodoList'
 import TodoService from './commons/TodoService'
 
-export default function TodoListPage () {
-  const [todoService] = useState(new TodoService(Config.restApi.url))
+export default function TodoListPage() {
+  const [todoService, setTodoService] = useState()
+  useEffect(() => {
+    //TODO instantiate the todoService
+  }, [])
 
-  const [todos, setTodos] = useState(todoService.getTodos())
+  return (
+    <>
+      {todoService ? (
+        <TodoListInstantiated todoService={todoService} />
+      ) : (
+        <p>loading</p>
+      )}
+    </>
+  );
+}
+
+
+function TodoListInstantiated({ todoService }) {
+  const [todos, setTodos] = useState([])
   const { filter } = useParams()
 
 
   useEffect(() => {
     todoService.fetch(filter).then(setTodos)
-    console.log('fetching todos')
-  }, [filter])
+  }, [filter, todoService])
 
   const createTodo = title =>
     todoService.add(title).then(setTodos)
   const deleteTodo = todo => todoService.delete(todo).then(setTodos)
-  const clearCompletedTodos = () =>
-    todoService.deleteCompleted('completed').then(setTodos)
+  const clearTodos = (filter) =>
+    todoService.deleteMany(filter).then(setTodos)
   const switchTodoCompletedStatus = todo => {
     todoService.switchTodoCompletedStatus(todo).then(setTodos)
   }
-
-  return (
-    <TodoList
-      todos={todos}
-      createTodo={createTodo}
-      deleteTodo={deleteTodo}
-      clearCompletedTodos={clearCompletedTodos}
-      switchTodoCompletedStatus={switchTodoCompletedStatus}
-    />
-  )
+  return <TodoList
+    todos={todos}
+    createTodo={createTodo}
+    deleteTodo={deleteTodo}
+    clearTodos={clearTodos}
+    switchTodoCompletedStatus={switchTodoCompletedStatus}
+    filter={filter}
+  />
 }
