@@ -47,8 +47,11 @@ export default class TodoService {
     return this.todos
   }
 
-  async deleteCompleted() {
-    const response = await axios.delete(`${this.baseApiUrl}/todos`, { status: "completed" })
+  async deleteMany(filter) {
+    if(["all", "completed", "active"].indexOf(filter) === -1){
+      filter = "all"
+    }
+    const response = await axios.delete(`${this.baseApiUrl}/todos`, { status: filter })
     this.todos = this.todos.filter(
       todo => !todo.completed 
     )

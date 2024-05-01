@@ -23,8 +23,9 @@ export default function TodoListComponent({
   todos,
   createTodo,
   deleteTodo,
-  clearCompletedTodos,
-  switchTodoCompletedStatus
+  clearTodos,
+  switchTodoCompletedStatus,
+  filter
 }) {
   const navigate = useNavigate();
   return (
@@ -35,7 +36,7 @@ export default function TodoListComponent({
       </header>
 
       <List sx={{ width: '100%' }}>
-        {todos.map((todo) => (
+      {todos.map((todo) => (
           <ListItem
             key={todo.id}
             secondaryAction={
@@ -73,8 +74,8 @@ export default function TodoListComponent({
           <BottomNavigationAction value="active" label="Active" icon={<Unpublished />} />
           <BottomNavigationAction value="completed" label="Completed" icon={<CheckCircle />} />
         </BottomNavigation>
-        <Tooltip title="Remove all done">
-          <IconButton variant="contained" onClick={clearCompletedTodos}>
+        <Tooltip title="Remove all todos in the current category">
+          <IconButton variant="contained" onClick={() => clearTodos(filter)}>
             <RemoveDoneIcon />
           </IconButton>
         </Tooltip>
