@@ -45,12 +45,17 @@ function TodoListInstantiated({ todoService }) {
   const switchTodoCompletedStatus = todo => {
     todoService.switchTodoCompletedStatus(todo).then(setTodos)
   }
+  const getAuthorAndTag = todo => {
+    return todoService.getAuthorAndTag(todo)
+  }
+
   return <TodoList
     todos={todos}
     createTodo={createTodo}
     deleteTodo={deleteTodo}
     clearTodos={clearTodos}
     switchTodoCompletedStatus={switchTodoCompletedStatus}
+    getAuthorAndTag={getAuthorAndTag}
     filter={filter}
   />
 }

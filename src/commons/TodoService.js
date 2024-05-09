@@ -60,6 +60,18 @@ export default class TodoService {
    * @returns all the todos, after the switch of the specified todo
    */
   async switchTodoCompletedStatus(todo) {
+    newTodo = { ...todo }
+    newTodo.completed = !newTodo.completed
+    return this.updateTodo(todo,newTodo)
   }
+
+  /**
+   * gets the author and the tag of the specified todo
+   * @param {*} todo the todo to get the author and tag from
+   * @returns a tuple with the author and the tag in the form [author, tag]
+   */
+  async getAuthorAndTag(todo){
+  }
+
 
 }
