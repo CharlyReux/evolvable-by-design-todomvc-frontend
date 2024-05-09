@@ -37,20 +37,25 @@ function TodoListInstantiated({ todoService }) {
     }
   }, [filter, todoService])
 
-  const createTodo = title =>
-    todoService.add(title).then(setTodos)
+  const createTodo = (title, tag, authorName) =>
+    todoService.add(title,tag,authorName).then(setTodos)
   const deleteTodo = todo => todoService.delete(todo).then(setTodos)
   const clearTodos = filter =>
     todoService.deleteMany(filter).then(setTodos)
   const switchTodoCompletedStatus = todo => {
     todoService.switchTodoCompletedStatus(todo).then(setTodos)
   }
+  const getAuthorAndTag = todo => {
+    return todoService.getAuthorAndTag(todo)
+  }
+
   return <TodoList
     todos={todos}
     createTodo={createTodo}
     deleteTodo={deleteTodo}
     clearTodos={clearTodos}
     switchTodoCompletedStatus={switchTodoCompletedStatus}
+    getAuthorAndTag={getAuthorAndTag}
     filter={filter}
   />
 }

@@ -18,8 +18,8 @@ export default class TodoService {
     return this.todos
   }
 
-  async add(title) {
-    const response = await axios.post(`${this.baseApiUrl}/todo`, { title })
+  async add(title,tag,author) {
+    const response = await axios.post(`${this.baseApiUrl}/todo`, { title,tag,"authorName":author })
     const todo = response.data
     this.todos = [...this.todos, todo]
     return this.todos
@@ -39,7 +39,7 @@ export default class TodoService {
 
   async delete(todo) {
     const response = await axios.delete(`${this.baseApiUrl}/todo/${todo.id}`)
-    const indexOfTodo = this.todos.findIndex(todo => todo.id === id)
+    const indexOfTodo = this.todos.findIndex(curTodo => curTodo.id === todo.id)
 
     const temporaryTodos = [...this.todos]
     temporaryTodos.splice(indexOfTodo, 1)
@@ -58,5 +58,13 @@ export default class TodoService {
     newTodo.completed = !newTodo.completed
     return this.updateTodo(todo,newTodo)
   }
+
+  async getAuthorAndTag(todo){
+    const authorResponse = await axios.get(`${this.baseApiUrl}/todo/${todo.id}/author`)
+    const tagResponse = await axios.get(`${this.baseApiUrl}/todo/${todo.id}/tag`)
+
+    return [authorResponse.data.name, tagResponse.data.name]
+  }
+
 
 }

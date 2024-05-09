@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 
 import List from '@mui/material/List';
@@ -18,16 +18,37 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import Typography from '@mui/material/Typography';
 
 import TodoInput from './TodoInput'
+import DetailDialog from './DetailDialog';
+import { ListItemIcon } from '@mui/material';
+import InfoIcon from '@mui/icons-material/Info';
 
 export default function TodoListComponent({
   todos,
   createTodo,
   deleteTodo,
   clearTodos,
+  getAuthorAndTag,
   switchTodoCompletedStatus,
   filter
 }) {
   const navigate = useNavigate();
+
+  const [open, setOpen] = useState(false);
+  const [selectedTodo, setSelectedTodo] = useState(null);
+  const [selectedTodoTitle, setSelectedTodoTitle] = useState(null);
+
+  const hash = (object) => {
+    return JSON.stringify(object)
+  }
+
+  const handleOpen = (todo, title) => () => {
+    setSelectedTodo(todo);
+    setSelectedTodoTitle(title);
+    setOpen(true);
+  }
+
+
+
   return (
     <>
       <header className='header'>
@@ -36,12 +57,12 @@ export default function TodoListComponent({
       </header>
 
       <List sx={{ width: '100%' }}>
-      {todos.map((todo) => (
+        {todos.map((todo) => (
           <ListItem
-            key={todo.id}
+            key={hash(todo)}
             secondaryAction={
               <div>
-                <IconButton edge="end" aria-label="delete" onClick={() => deleteTodo((todo))}>
+                <IconButton edge="end" aria-label="delete" onClick={() => deleteTodo(todo)}>
                   <DeleteIcon />
                 </IconButton>
                 <IconButton edge="end" aria-label="complete" onClick={() => switchTodoCompletedStatus(todo)}>
@@ -55,6 +76,11 @@ export default function TodoListComponent({
             }
 
           >
+            <ListItemIcon>
+              <IconButton onClick={handleOpen(todo, todo.title)}>
+                <InfoIcon />
+              </IconButton>
+            </ListItemIcon>
             <ListItemText disableTypography
               id={todo.id} primary={
                 <Typography className={todo.completed ? 'text-strike' : null}>{todo.title}</Typography>
@@ -81,6 +107,8 @@ export default function TodoListComponent({
         </Tooltip>
       </div>
 
+      <DetailDialog todo={selectedTodo} title={selectedTodoTitle} open={open} onClose={() => setOpen(false)} getAuthorAndTag={getAuthorAndTag} />
     </>
+
   )
 }
