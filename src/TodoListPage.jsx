@@ -9,7 +9,8 @@ import TodoService from './commons/TodoService'
 export default function TodoListPage() {
   const [todoService, setTodoService] = useState()
   useEffect(() => {
-        //TODO instantiate the todoService
+    setTodoService(new TodoService(Config.API_URL))
+    //TODO instantiate the todoService
   }, [])
 
   return (
@@ -37,7 +38,7 @@ function TodoListInstantiated({ todoService }) {
     }
   }, [filter, todoService])
 
-  const createTodo = (title,author,tag) =>
+  const createTodo = (title, author, tag) =>
     todoService.add(title, author, tag).then(setTodos)
   const deleteTodo = todo => todoService.delete(todo).then(setTodos)
   const clearTodos = filter =>
