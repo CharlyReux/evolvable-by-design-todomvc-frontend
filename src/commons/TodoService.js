@@ -66,7 +66,7 @@ export default class TodoService {
    * @returns all the todos, after the switch of the specified todo
    */
   async switchTodoCompletedStatus(todo) {
-    newTodo = { ...todo }
+    const newTodo = { ...todo }
     newTodo.completed = !newTodo.completed
     return this.updateTodo(todo, newTodo)
   }
