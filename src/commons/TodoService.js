@@ -3,6 +3,10 @@ import axios from 'axios'
 
 
 export default class TodoService {
+  /**
+   * 
+   * @param {string} baseApiUrl the url of the api
+   */
   constructor(baseApiUrl) {
     this.todos = []
     this.baseApiUrl = baseApiUrl
