@@ -24,11 +24,13 @@ export default class TodoService {
   async fetch(filter){
     //TODO fetch todos from the server
   }
-/**
- * @param {string} title : the title of the todo to add
- * @returns the list of all todos
- */
-  async add(title) {
+  /**
+   * @param {string} title : the title of the todo to add
+   * @param {string} author : the name of the author of the todo
+   * @param {string} tag : the name of the tag of the todo
+   * @returns the list of all todos
+   */
+  async add(title, author, tag) {
     //TODO create the method to add a todo
   }
 
@@ -66,7 +68,7 @@ export default class TodoService {
   async switchTodoCompletedStatus(todo) {
     newTodo = { ...todo }
     newTodo.completed = !newTodo.completed
-    return this.updateTodo(todo,newTodo)
+    return this.updateTodo(todo, newTodo)
   }
 
   /**
@@ -74,7 +76,7 @@ export default class TodoService {
    * @param {*} todo the todo to get the author and tag from
    * @returns a tuple with the author and the tag in the form [author, tag]
    */
-  async getAuthorAndTag(todo){
+  async getAuthorAndTag(todo) {
   }
 
 

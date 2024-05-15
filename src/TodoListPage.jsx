@@ -1,6 +1,6 @@
 import React, { useMemo, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import {  useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 import * as Config from './config'
 import TodoList from './TodoList'
@@ -32,13 +32,13 @@ function TodoListInstantiated({ todoService }) {
   useEffect(() => {
     if (["", "all", "completed", "active"].indexOf(filter) === -1) {
       navigate("/all");
-    }else{
+    } else {
       todoService.fetch(filter).then(setTodos)
     }
   }, [filter, todoService])
 
   const createTodo = title =>
-    todoService.add(title).then(setTodos)
+    todoService.add(title, author, tag).then(setTodos)
   const deleteTodo = todo => todoService.delete(todo).then(setTodos)
   const clearTodos = filter =>
     todoService.deleteMany(filter).then(setTodos)
