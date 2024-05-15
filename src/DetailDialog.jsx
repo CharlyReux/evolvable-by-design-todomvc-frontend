@@ -12,7 +12,7 @@ export default function DetailDialog({ open, todo,title, onClose, getAuthorAndTa
     useEffect(() => {
         if (open) {
             getAuthorAndTag(todo).then(async ([author, tag]) => {
-                setDetails([author, tag])
+                setDetails([author.toString(), tag.toString()])
             })
         }
     }, [open])
