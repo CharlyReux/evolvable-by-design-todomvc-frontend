@@ -97,10 +97,8 @@ export default class TodoService {
    * @returns a tuple with the author and the tag in the form [author:str, tag:str]
    */
   async getAuthorAndTag(todo) {
-    const authorResponse = await axios.get(this.baseApiUrl+"/todo/"+todo.id+"/author")
-    const tagResponse = await axios.get(this.baseApiUrl+"/todo/"+todo.id+"/tag")
-    console.log(authorResponse,tagResponse)
-    return [authorResponse.data.authorName,tagResponse.data.tagName]
+    const response = await axios.get(this.baseApiUrl+"/todo/"+todo.id+"/details")
+    return [response.data.authorName,response.data.tagName]
   }
 
 
