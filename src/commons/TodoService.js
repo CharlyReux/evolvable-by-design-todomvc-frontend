@@ -50,7 +50,7 @@ export default class TodoService {
    * @returns all the todos, after the update
    */
   async updateTodo(todo, newValue) {
-    const response = await axios.put(this.baseApiUrl+"/todo/"+todo.id,newValue)
+    const response = await axios.post(this.baseApiUrl+"/todo/"+todo.id,newValue)
 
     this.todos = this.todos.filter(curTodo => todo.id != curTodo.id)
     this.todos = [...this.todos].concat([await response.data])
