@@ -22,7 +22,7 @@ export default class TodoService {
    * @returns {Array} : a list of todos
    */
   async fetch(filter){
-    const response = await axios.get(this.baseApiUrl + "/todos", {"params": {"status": filter} })
+    const response = await axios.get(this.baseApiUrl + "/todo", {"params": {"status": filter} })
     this.todos = response.data.todos
     return this.getTodos()
   }
