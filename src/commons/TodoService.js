@@ -34,7 +34,7 @@ export default class TodoService {
    */
   async add(title, author, tag) {
     const response = await axios.post(this.baseApiUrl +"/todo",{
-      title:title,
+      text:title,
       "authorName":author,
       "tagName":tag
     })
