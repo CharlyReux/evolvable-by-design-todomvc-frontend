@@ -36,7 +36,8 @@ export default class TodoService {
     const response = await axios.post(this.baseApiUrl +"/todo",{
       title:title,
       "authorName":author,
-      "tagName":tag
+      "tagName":tag,
+      "dueDate":"no due date"
     })
     this.todos = [...this.todos].concat([response.data])
     return this.getTodos()
