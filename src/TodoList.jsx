@@ -86,6 +86,10 @@ export default function TodoListComponent({
               id={todo.id} primary={
                 <Typography className={todo.completed ? 'text-strike' : null}>{todo.title}</Typography>
               } />
+              <ListItemText disableTypography
+              id={todo.id} primary={
+                <Typography className="date">{todo.dueDate ? todo.dueDate : "No dueDate"}</Typography>
+              } />
           </ListItem>
         ))}
       </List>
