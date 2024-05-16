@@ -13,8 +13,18 @@ export default class TodoService {
   }
 
   getTodos() {
+    this.todos.map(todo => this.modifiedTodo(todo))
     return this.todos
   }
+
+
+  modifiedTodo(todo){
+    const newtodo = todo
+    newtodo.dueDate = todo.infos.dueDate
+    newtodo.completed = todo.infos.completed
+    return newtodo
+  }
+
 
   /**
    * 
@@ -54,7 +64,7 @@ export default class TodoService {
     const response = await axios.put(this.baseApiUrl+"/todo/"+todo.id,newValue)
 
     this.todos = this.todos.filter(curTodo => todo.id != curTodo.id)
-    this.todos = [...this.todos].concat([await response.data])
+    this.todos = [...this.todos].concat([response.data])
     return this.getTodos()
     //TODO implement the update of a todo
   }

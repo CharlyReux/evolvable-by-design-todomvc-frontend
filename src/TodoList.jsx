@@ -88,7 +88,7 @@ export default function TodoListComponent({
               } />
               <ListItemText disableTypography
               id={todo.id} primary={
-                <Typography className= 'date'>{todo.infos.dueDate}</Typography>
+                <Typography className= 'date'>{todo.dueDate}</Typography>
               } />
           </ListItem>
         ))}
