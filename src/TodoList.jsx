@@ -58,7 +58,7 @@ export default function TodoListComponent({
       </header>
 
       <List sx={{ width: '100%' }}>
-      {todos.map((todo) => (
+        {todos.map((todo) => (
           <ListItem
             key={hash(todo)}
             secondaryAction={
@@ -86,9 +86,9 @@ export default function TodoListComponent({
               id={todo.id} primary={
                 <Typography className={todo.completed ? 'text-strike' : null}>{todo.title}</Typography>
               } />
-              <ListItemText disableTypography
+            <ListItemText disableTypography
               id={todo.id} primary={
-                <Typography className= 'date'>{todo.dueDate}</Typography>
+                <Typography className='date'>{todo.dueDate}</Typography>
               } />
           </ListItem>
         ))}
@@ -105,10 +105,12 @@ export default function TodoListComponent({
           <BottomNavigationAction value="active" label="Active" icon={<Unpublished />} />
           <BottomNavigationAction value="completed" label="Completed" icon={<CheckCircle />} />
         </BottomNavigation>
-        <Tooltip title="Remove all todos in the current category">
-          <IconButton variant="contained" onClick={() => clearTodos(filter)}>
-            <RemoveDoneIcon />
-          </IconButton>
+        <Tooltip title="Remove all completed todos">
+          {(filter == "completed") ?
+            <IconButton variant="contained" onClick={() => clearTodos(filter)}>
+              <RemoveDoneIcon />
+            </IconButton>:<></>
+          }
         </Tooltip>
       </div>
 
