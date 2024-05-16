@@ -2,6 +2,10 @@
   text-decoration: line-through;
 }
 
+.date{
+  color: gray;
+}
+
 body {
   width: 80%;
   min-width: 0px;
