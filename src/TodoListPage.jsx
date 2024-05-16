@@ -9,6 +9,8 @@ import TodoService from './commons/TodoService'
 export default function TodoListPage() {
   const [todoService, setTodoService] = useState()
   useEffect(() => {
+    TodoService.forApiAtUrl("http://localhost:8080/rest").then(setTodoService)
+
         //TODO instantiate the todoService
   }, [])
 

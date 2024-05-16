@@ -1,5 +1,5 @@
 import axios from 'axios'
-
+import Pivo from '@evolvable-by-design/pivo'
 
 
 export default class TodoService {
@@ -7,9 +7,19 @@ export default class TodoService {
    * 
    * @param {string} baseApiUrl the url of the api
    */
-  constructor(baseApiUrl) {
+  constructor(documentation) {
     this.todos = []
-    this.baseApiUrl = baseApiUrl
+    this.pivo = new Pivo(documentation)
+    this.todoCollectionOperation = this.pivo
+    .get("http://evolvable-by-design.github.io/vocabs/todomvc#TodoCollection")
+    .getOrThrow(()=>new Error("No todoCollection operation"))
+    this.todoCollectionResponse = null
+  }
+
+  static async forApiAtUrl(url) {
+    const response = await axios.options(url)
+    const documentationString = await response.data
+    return new TodoService(documentationString)
   }
 
   getTodos() {
@@ -21,7 +31,13 @@ export default class TodoService {
    * @param {String} filter : a filter to fetch todos either 'all', 'active' or 'completed'
    * @returns {Array} : a list of todos
    */
-  async fetch(filter){
+  async fetch(filter) {
+    this.todoCollectionResponse = await this.todoCollectionOperation.invoke()
+
+    this.todos = this.todoCollectionResponse.data.getArray("http://evolvable-by-design.github.io/vocabs/todomvc#Todos")
+
+
+    return this.getTodos()
     //TODO fetch todos from the server
   }
   /**
@@ -31,6 +47,17 @@ export default class TodoService {
    * @returns the list of all todos
    */
   async add(title, author, tag) {
+    //console.log(this.todoCollectionResponse.data)
+    const creationOperation =  await this.todoCollectionResponse.data.
+    getRelation("http://evolvable-by-design.github.io/vocabs/todomvc#rel/create")
+    .map(relation => {
+      return relation[0].operation
+    })
+    .getOrThrow(()=>new Error("no relation available to create a todo"))
+    console.log(creationOperation)
+    console.log(this.todoCollectionOperation)
+    await creationOperation.invoke({ ["http://schema.org/name"]: title ,["http://schema.org/givenName"]:author,["http://schema.org/DefinedTerm"]:tag})
+    return this.fetch("all")
     //TODO create the method to add a todo
   }
 
