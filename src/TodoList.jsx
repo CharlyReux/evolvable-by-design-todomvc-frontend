@@ -82,7 +82,7 @@ export default function TodoListComponent({
                       <DeleteIcon />
                     </IconButton>
                     <IconButton edge="end" aria-label="complete" onClick={() => switchTodoCompletedStatus(todo)}>
-                      {todo.completed ?
+                      {completed ?
                         <CheckBoxIcon />
                         :
                         <CheckBoxOutlineBlankIcon />

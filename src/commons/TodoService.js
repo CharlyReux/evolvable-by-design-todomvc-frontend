@@ -14,6 +14,7 @@ export default class TodoService {
     .get("http://evolvable-by-design.github.io/vocabs/todomvc#TodoCollection")
     .getOrThrow(()=>new Error("No todoCollection operation"))
     this.todoCollectionResponse = null
+    this.currentFilter = null
   }
 
   static async forApiAtUrl(url) {
@@ -32,10 +33,10 @@ export default class TodoService {
    * @returns {Array} : a list of todos
    */
   async fetch(filter) {
-    this.todoCollectionResponse = await this.todoCollectionOperation.invoke()
-
-    this.todos = this.todoCollectionResponse.data.getArray("http://evolvable-by-design.github.io/vocabs/todomvc#Todos")
-
+    this.todoCollectionResponse = await this.todoCollectionOperation
+    .invoke({["http://evolvable-by-design.github.io/vocabs/todomvc#status"]:filter})
+    this.filter = filter
+    this.todos = await this.todoCollectionResponse.data.getArray("http://evolvable-by-design.github.io/vocabs/todomvc#Todos")
 
     return this.getTodos()
     //TODO fetch todos from the server
@@ -47,17 +48,14 @@ export default class TodoService {
    * @returns the list of all todos
    */
   async add(title, author, tag) {
-    //console.log(this.todoCollectionResponse.data)
     const creationOperation =  await this.todoCollectionResponse.data.
     getRelation("http://evolvable-by-design.github.io/vocabs/todomvc#rel/create")
     .map(relation => {
       return relation[0].operation
     })
     .getOrThrow(()=>new Error("no relation available to create a todo"))
-    console.log(creationOperation)
-    console.log(this.todoCollectionOperation)
     await creationOperation.invoke({ ["http://schema.org/name"]: title ,["http://schema.org/givenName"]:author,["http://schema.org/DefinedTerm"]:tag})
-    return this.fetch("all")
+    return this.fetch(this.filter)
     //TODO create the method to add a todo
   }
 
@@ -68,6 +66,13 @@ export default class TodoService {
    * @returns all the todos, after the update
    */
   async updateTodo(todo, newValue) {
+    const updateOperation = await todo.
+    getRelation("http://evolvable-by-design.github.io/vocabs/todomvc#rel/update")
+    .map(relation => {
+      return relation[0].operation
+    }).getOrThrow(()=>new Error("no relation available to update a todo"))
+    await updateOperation.invoke({...newValue})
+    return this.fetch(this.filter)
     //TODO implement the update of a todo
   }
 
@@ -77,6 +82,14 @@ export default class TodoService {
    * @returns all the todos, after the deletion
    */
   async delete(todo) {
+    const deleteOperation = await todo.
+    getRelation("http://evolvable-by-design.github.io/vocabs/todomvc#rel/delete")
+    .map(relation => {
+      return relation[0].operation
+    }).getOrThrow(()=>new Error("no relation available to update a todo"))
+
+    await deleteOperation.invoke()
+    return this.fetch(this.filter)
     //TODO implement the deletion of a todo
   }
 
@@ -85,6 +98,14 @@ export default class TodoService {
    * @returns all the todos, after the deletion of all completed todos
    */
   async deleteMany(filter) {
+    const deletemanyOperation = this.todoCollectionResponse.data
+    .getRelation("http://evolvable-by-design.github.io/vocabs/todomvc#rel/deleteMany")
+    .map(relation => {
+      return relation[0].operation
+    }).getOrThrow(()=>new Error("no relation available to update a todo"))
+
+    await deletemanyOperation.invoke({["http://evolvable-by-design.github.io/vocabs/todomvc#status"]:filter})
+    return this.fetch(filter)
   }
 
   /**
@@ -93,7 +114,7 @@ export default class TodoService {
    * @returns all the todos, after the switch of the specified todo
    */
   async switchTodoCompletedStatus(todo) {
-    const newTodo = { ...todo }
+    const newTodo = { ...todo.data }
     newTodo.completed = !newTodo.completed
     return this.updateTodo(todo, newTodo)
   }
@@ -104,6 +125,23 @@ export default class TodoService {
    * @returns a tuple with the author and the tag in the form [author, tag]
    */
   async getAuthorAndTag(todo) {
+    const TagOperation = todo
+    .getRelation("http://evolvable-by-design.github.io/vocabs/todomvc#rel/getTag")
+    .map(relation => {
+      return relation[0].operation
+    }).getOrThrow(()=>new Error("no relation available to update a todo"))
+
+    const authorOperation = todo
+    .getRelation("http://evolvable-by-design.github.io/vocabs/todomvc#rel/getAuthor")
+    .map(relation => {
+      return relation[0].operation
+    }).getOrThrow(()=>new Error("no relation available to update a todo"))
+
+    const tagResponse = (await TagOperation.invoke()).data.data
+    const authorResponse = (await authorOperation.invoke()).data.data
+
+    return [tagResponse.tagName,authorResponse.authorName]
+
   }
 
 
