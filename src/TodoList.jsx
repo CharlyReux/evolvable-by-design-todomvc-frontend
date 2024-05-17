@@ -122,10 +122,13 @@ export default function TodoListComponent({
           <BottomNavigationAction value="active" label="Active" icon={<Unpublished />} />
           <BottomNavigationAction value="completed" label="Completed" icon={<CheckCircle />} />
         </BottomNavigation>
-        <Tooltip title="Remove all todos in the current category">
+        <Tooltip title="Remove all completed todos">
+          
+          {filter == "completed"?          
           <IconButton variant="contained" onClick={() => clearTodos(filter)}>
             <RemoveDoneIcon />
-          </IconButton>
+          </IconButton>:<></>}
+
         </Tooltip>
       </div>
 
