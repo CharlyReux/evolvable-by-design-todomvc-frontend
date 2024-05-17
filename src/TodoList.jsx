@@ -69,11 +69,10 @@ export default function TodoListComponent({
             mappings={{
               title: "http://schema.org/name",
               completed: "http://evolvable-by-design.github.io/vocabs/todomvc#completed",
-              dueDate: "http://schema.org/DateTime",
               id:"http://evolvable-by-design.github.io/vocabs/todomvc#todoId"
             }}
             loader={<div>Loading...</div>}>
-            {({ title, completed, dueDate,id}) => (
+            {({ title, completed,id}) => (
               <ListItem
                 key={hash(todo)}
                 secondaryAction={
@@ -101,10 +100,7 @@ export default function TodoListComponent({
                   id={id} primary={
                     <Typography className={completed ? 'text-strike' : null}>{title}</Typography>
                   } />
-                <ListItemText disableTypography
-                  id={id} primary={
-                    <Typography className="date"> {dueDate} </Typography>
-                  } />
+                
               </ListItem>
             )}
           </WithSemanticDataRequired>
