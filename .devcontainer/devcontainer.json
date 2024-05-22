@@ -23,7 +23,7 @@
     5173
   ],
   "portsAttributes": {
-    "3000": {
+    "8080": {
       "label": "backend",
       "onAutoForward": "notify"
     },
