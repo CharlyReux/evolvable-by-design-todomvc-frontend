@@ -77,6 +77,7 @@ export default class TodoService {
    * @returns a tuple with the author and the tag in the form [author, tag]
    */
   async getAuthorAndTag(todo) {
+    //TODO: implement getAuthorAndTag Method
   }
 
 
