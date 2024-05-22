@@ -1,5 +1,5 @@
 {
-  "name": "tutorial-pivo-devcontainer",
+  "name": "experiment-pivo-devcontainer",
   "image": "charlyreux/pivo-tutorial",
   "customizations": {
     "vscode": {
@@ -12,7 +12,7 @@
     }
   },
   "initializeCommand": {
-    "frontendInstall": "cd frontend && npm install"
+    "frontendInstall": " npm install"
   },
   "forwardPorts": [
     8080,
