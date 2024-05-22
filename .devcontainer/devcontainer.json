@@ -15,11 +15,11 @@
     "frontendInstall": "cd frontend && npm install"
   },
   "forwardPorts": [
-    3000,
+    8080,
     5173
   ],
   "appPort": [
-    3000,
+    8080,
     5173
   ],
   "portsAttributes": {
