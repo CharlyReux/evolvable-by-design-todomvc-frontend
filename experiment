@@ -2,10 +2,138 @@
 
 
 import argparse
+import os
+import json
+import sys
+import logging
+import pickle
+import time
+import shutil
+
+################### LOGGING SETUP ########################
 
 
-parser = argparse.ArgumentParser(description='Description of your script')
-parser.add_argument('arg1', help='Description of argument 1')
-parser.add_argument('--optional_arg', help='Description of optional argument')
+class CustomFormatter(logging.Formatter):
+    """Logging colored formatter, adapted from https://stackoverflow.com/a/56944256/3638629"""
+
+    grey = "\x1b[38;21m"
+    blue = "\x1b[38;5;39m"
+    yellow = "\x1b[38;5;226m"
+    red = "\x1b[38;5;196m"
+    bold_red = "\x1b[31;1m"
+    reset = "\x1b[0m"
+
+    def __init__(self, fmt):
+        super().__init__()
+        self.fmt = fmt
+        self.FORMATS = {
+            logging.DEBUG: self.grey + self.fmt + self.reset,
+            logging.INFO: self.blue + self.fmt + self.reset,
+            logging.WARNING: self.yellow + self.fmt + self.reset,
+            logging.ERROR: self.red + self.fmt + self.reset,
+            logging.CRITICAL: self.bold_red + self.fmt + self.reset,
+        }
+
+    def format(self, record):
+        log_fmt = self.FORMATS.get(record.levelno)
+        formatter = logging.Formatter(log_fmt)
+        return formatter.format(record)
+
+
+# logging.basicConfig(level=logging.INFO)
+fmt = "%(message)s"
+stdout_handler = logging.StreamHandler()
+stdout_handler.setLevel(logging.INFO)
+stdout_handler.setFormatter(CustomFormatter(fmt))
+logger = logging.getLogger(__name__)
+logger.addHandler(stdout_handler)
+logger.setLevel(logging.INFO)
+
+
+################### UTILITARY METHODS ########################
+def get_implem(state_data):
+    participants_config = os.path.join(script_dir, ".experiment/participants.json")
+    with open(participants_config, "r") as participants_file:
+        participants_data = json.load(participants_file)
+    return participants_data[state_data["participant_number"]]["implementations"]
+
+
+def get_current_step(implem, state_data):
+    participants_config = os.path.join(script_dir, ".experiment/participants.json")
+    with open(participants_config, "r") as participants_file:
+        participants_data = json.load(participants_file)
+    return implem[state_data["step_number"]]
+
+
+def save_state(participant_state_path, state_data):
+    with open(participant_state_path, "wb") as participant_state:
+        pickle.dump(state_data, participant_state)
+
+
+################### SCRIPT ########################
+# argument parsing
+parser = argparse.ArgumentParser(description="Description of your script")
+parser.add_argument("-s", "--set-participant-number", help="Number of the participant")
+parser.add_argument("-n", "--next-step", help="goes forward on step in the experiment")
+
+
 args = parser.parse_args()
 
+# Getting the script dir and the config(of the current participant) file path
+script_dir = os.path.dirname(__file__)
+participant_state_path = os.path.join(script_dir, ".experiment/participant_state")
+
+
+# initial first set up, that configurates the current participant
+if args.set_participant_number:
+    state_data = {
+        "participant_number": args.set_participant_number,
+        "timestamps": {"start": time.time()},
+    }
+    with open(participant_state_path, "wb") as participant_state:
+        pickle.dump(state_data, participant_state)
+        logger.info("Participant number set: {}".format(args.set_participant_number))
+        participant_implementations = get_implem(state_data)
+        logger.info("The experiment now begins.")
+        logger.info(
+            "you will start with the {}".format(participant_implementations[0].split("-")[1])
+        )
+        logger.info(
+            "Follow the instructions in the README of this repository, starting with the sub-section 'First Implementation' in the section of the {}".format(
+                participant_implementations[0].split("-")[1]
+            )
+        )
+        
+        sys.exit(0)
+
+# Experiment continuation
+## Checking that the initial setup has been done
+
+if not os.path.exists(participant_state_path):
+    logger.error(
+        """You have not set up your participant number yet, please run
+
+./experiment -s <YOUR_NUMBER>
+
+"""
+    )
+    sys.exit(10)
+
+
+## loading the state data
+with open(participant_state_path, "r") as state_file:
+    state_data = pickle.load(state_file)
+
+"""         "participant_number" "step_number" "evolution_number" "timestamps" """
+
+if args.next_step:
+  
+    version_path = args.next_step
+    shutil.copyfile(
+        os.path.join(script_dir, ".experiment/doc", version_path + ".yml"),
+        os.path.join(script_dir, "../openapi.yml"),
+    )
+    shutil.copyfile(
+        os.path.join(script_dir, ".experiment/app", version_path + ".jar"),
+        os.path.join(script_dir, "../openapi.yml"),
+    )
