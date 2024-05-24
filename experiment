@@ -9,6 +9,8 @@ import logging
 import pickle
 import time
 import shutil
+import subprocess
+import signal
 
 ################### LOGGING SETUP ########################
 
@@ -43,38 +45,147 @@ class CustomFormatter(logging.Formatter):
 # logging.basicConfig(level=logging.INFO)
 fmt = "%(message)s"
 stdout_handler = logging.StreamHandler()
-stdout_handler.setLevel(logging.INFO)
+stdout_handler.setLevel(logging.DEBUG)
 stdout_handler.setFormatter(CustomFormatter(fmt))
 logger = logging.getLogger(__name__)
 logger.addHandler(stdout_handler)
-logger.setLevel(logging.INFO)
+logger.setLevel(logging.DEBUG)
 
 
 ################### UTILITARY METHODS ########################
-def get_implem(state_data):
+def get_implem(participant_number):
     participants_config = os.path.join(script_dir, ".experiment/participants.json")
     with open(participants_config, "r") as participants_file:
         participants_data = json.load(participants_file)
-    return participants_data[state_data["participant_number"]]["implementations"]
+    return participants_data[participant_number]["implementations"]
 
 
-def get_current_step(implem, state_data):
-    participants_config = os.path.join(script_dir, ".experiment/participants.json")
-    with open(participants_config, "r") as participants_file:
-        participants_data = json.load(participants_file)
-    return implem[state_data["step_number"]]
+################### STATE_CLASS ########################
+class participantState:
+    def __init__(self, participant_number) -> None:
+        self.participant_number = participant_number
+        self.cur_step = 0
+        self.steps = {}
+        self.implems = get_implem(participant_number)
+        subprocess.run(
+            ["git", "checkout", "-b", f"participant{self.participant_number}"],
+            stdin=subprocess.DEVNULL,
+            stdout=subprocess.DEVNULL,
+        )
+        process = subprocess.Popen(
+            ["java", "--jar", "apps/start.jar"],
+            preexec_fn=os.setsid,
+            stdin=subprocess.DEVNULL,
+            stdout=subprocess.DEVNULL,
+        )
+        self.backend_pid = process.pid
 
+    def save(self):
+        with open(participant_state_path, "wb") as participant_state:
+            pickle.dump(self, participant_state)
 
-def save_state(participant_state_path, state_data):
-    with open(participant_state_path, "wb") as participant_state:
-        pickle.dump(state_data, participant_state)
+    def load():
+        with open(participant_state_path, "wb") as participant_state:
+            return pickle.load(participant_state)
+
+    def previous_step(self):
+        self.cur_step -= 1#only for debuging purposes
+
+    def advance(self):
+        # checking if this is the end of the experiment
+        if not self.next_step():
+            with open(script_dir + "/experiment-data.json", "w", encoding="utf-8") as f:
+                json.dump(self, f, ensure_ascii=False, indent=4)
+            logger.info(
+                "End of the experiment, Your experiment report has been generated at "
+                + script_dir
+                + "/experiment-data.json"
+            )
+            logger.info("please send it to charly.reux@inria.fr")
+            logger.info("Thanks for participating!")
+            sys.exit(0)
+
+        # updating the step
+        self.cur_step += 1
+        self.steps[self.implems[self.current_step()]] = time.time()
+        # stopping the backend implementation
+        try:
+            os.kill(self.backend_pid, signal.SIGTERM)
+        except:
+            logger.warning("No backend running, still advancing to next step")
+
+        subprocess.run(
+            ["git", "add", "."], stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL
+        )
+        subprocess.run(
+            ["git", "commit", "-m"],
+            self.current_step(),
+            stdin=subprocess.DEVNULL,
+            stdout=subprocess.DEVNULL,
+        )
+
+        ##if we have implemented a "first implementation", we tag the commit in order to get back to it when arriving in the second set
+        if "first_implementation" in self.current_step():
+            subprocess.run(["git", "tag", self.current_step()])
+        ## if the next step is a first evolution, and the current step is not a first implementation, we put the current implementation to the previous version
+        elif "evo1" in self.next_step():
+            approach = self.current_step().split("-")[0]
+            subprocess.run(
+                ["git", "checkout", "-b",self.next_step(), f"{approach}-first_implementation"],
+                stdin=subprocess.DEVNULL,
+                stdout=subprocess.DEVNULL,
+            )
+        # if the next step is a first implementation, wee roll back the empty frontend implementation
+        elif "first_implementation" in self.next_step():
+            subprocess.run(
+                ["git", "checkout", f"participant{self.participant_number}"],
+                stdin=subprocess.DEVNULL,
+                stdout=subprocess.DEVNULL
+            )
+
+        if "set" in state.next_step():
+            version_path = self.next_step().split("-")[1]
+        else:
+            version_path = "start"
+        # copying the openapi file of the next version
+        shutil.copyfile(
+            os.path.join(script_dir, ".experiment/doc", version_path + ".yml"),
+            os.path.join(script_dir, "../openapi.yml"),
+        )
+        # starting the next version of the backend
+        process = subprocess.Popen(
+            ["java", "--jar", f"apps/{version_path}.jar"], preexec_fn=os.setsid
+        )
+        self.backend_pid = process.pid
+
+    def current_step(self) -> str:
+        return self.implems[self.cur_step]
+
+    def next_step(self) -> str:
+        if self.cur_step + 1 >= len(self.implems):
+            return None
+        return self.implems[self.cur_step + 1]
+
+    def verify_exist():
+        if not os.path.exists(participant_state_path):
+            logger.error(
+                """You have not set up your participant number yet, please run
+
+./experiment -s <YOUR_NUMBER>
+
+"""
+            )
+        sys.exit(10)
+
+    def print_state(self):
+        logger.debug(self)
 
 
 ################### SCRIPT ########################
 # argument parsing
 parser = argparse.ArgumentParser(description="Description of your script")
 parser.add_argument("-s", "--set-participant-number", help="Number of the participant")
-parser.add_argument("-n", "--next-step", help="goes forward on step in the experiment")
+parser.add_argument("-n", "--next-step", help="goes forward one step in the experiment")
 
 
 args = parser.parse_args()
@@ -83,57 +194,58 @@ args = parser.parse_args()
 script_dir = os.path.dirname(__file__)
 participant_state_path = os.path.join(script_dir, ".experiment/participant_state")
 
-
 # initial first set up, that configurates the current participant
 if args.set_participant_number:
-    state_data = {
-        "participant_number": args.set_participant_number,
-        "timestamps": {"start": time.time()},
-    }
-    with open(participant_state_path, "wb") as participant_state:
-        pickle.dump(state_data, participant_state)
-        logger.info("Participant number set: {}".format(args.set_participant_number))
-        participant_implementations = get_implem(state_data)
-        logger.info("The experiment now begins.")
-        logger.info(
-            "you will start with the {}".format(participant_implementations[0].split("-")[1])
+    if os.path.exists(participant_state_path):
+        logger.warning(
+            "Running this command will overwrite your existing previous state"
         )
-        logger.info(
-            "Follow the instructions in the README of this repository, starting with the sub-section 'First Implementation' in the section of the {}".format(
-                participant_implementations[0].split("-")[1]
-            )
+        user_validation = input(
+            f"Are you sure that you want to set your reset your state?[y,n]"
         )
-        
-        sys.exit(0)
+        if user_validation == "n":
+            logger.warning("Cancelled")
+            sys.exit(0)
+        elif user_validation != "y":
+            logger.error("Input not recognized, cancelling")
+            sys.exit(0)
+
+    logger.info("Participant number set: {}".format(args.set_participant_number))
+
+    logger.debug("Setting_up...")
+    state: participantState = participantState(args.set_participant_number)
+
+    logger.info("The experiment now begins.")
+    logger.info(
+        "you will start with the {} approach".format(state.next_step().split("-")[0])
+    )
+    logger.info(
+        "Follow the instructions in the README of this repository, starting with the sub-section 'First Implementation' in the section of the {}".format(
+            state.next_step().split("-")[0]
+        )
+    )
+    state.save()
+    sys.exit(0)
 
 # Experiment continuation
 ## Checking that the initial setup has been done
-
-if not os.path.exists(participant_state_path):
-    logger.error(
-        """You have not set up your participant number yet, please run
-
-./experiment -s <YOUR_NUMBER>
-
-"""
-    )
-    sys.exit(10)
-
+participantState.verify_exist()
 
 ## loading the state data
-with open(participant_state_path, "r") as state_file:
-    state_data = pickle.load(state_file)
-
-"""         "participant_number" "step_number" "evolution_number" "timestamps" """
-
+state: participantState = participantState.load()
 if args.next_step:
-  
-    version_path = args.next_step
-    shutil.copyfile(
-        os.path.join(script_dir, ".experiment/doc", version_path + ".yml"),
-        os.path.join(script_dir, "../openapi.yml"),
+    logger.warning(f"You have implemented {state.next_step()} and you interface work.")
+    logger.warning("There is no going backward")
+    user_validation = input(
+        f"Are you sure that you want to advance to the next step?[y,n]"
     )
-    shutil.copyfile(
-        os.path.join(script_dir, ".experiment/app", version_path + ".jar"),
-        os.path.join(script_dir, "../openapi.yml"),
-    )
+    if user_validation == "n":
+        logger.warning("Cancelled... Not advancing to next step")
+        sys.exit(0)
+    elif user_validation == "y":
+        logger.warning("Advancing to next step")
+        state.advance()
+    else:
+        logger.error("Input not recognized, cancelling")
+    state.print_state()  # debug TODO:remove
+    state.save()
