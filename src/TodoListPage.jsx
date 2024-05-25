@@ -2,7 +2,7 @@ import React, { useMemo, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { useNavigate } from 'react-router-dom'
 
-import * as Config from './config'
+import API_URL from './config'
 import TodoList from './TodoList'
 import TodoService from './commons/TodoService'
 
