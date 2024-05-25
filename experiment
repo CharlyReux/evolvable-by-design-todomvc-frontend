@@ -83,11 +83,11 @@ class participantState:
             pickle.dump(self, participant_state)
 
     def load():
-        with open(participant_state_path, "wb") as participant_state:
+        with open(participant_state_path, "rb") as participant_state:
             return pickle.load(participant_state)
 
     def previous_step(self):
-        self.cur_step -= 1#only for debuging purposes
+        self.cur_step -= 1  # only for debuging purposes
 
     def advance(self):
         # checking if this is the end of the experiment
@@ -105,7 +105,7 @@ class participantState:
 
         # updating the step
         self.cur_step += 1
-        self.steps[self.implems[self.current_step()]] = time.time()
+        self.steps[self.implems[self.cur_step]] = time.time()
         # stopping the backend implementation
         try:
             os.kill(self.backend_pid, signal.SIGTERM)
@@ -116,8 +116,7 @@ class participantState:
             ["git", "add", "."], stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL
         )
         subprocess.run(
-            ["git", "commit", "-m"],
-            self.current_step(),
+            ["git", "commit", "-m", self.current_step()],
             stdin=subprocess.DEVNULL,
             stdout=subprocess.DEVNULL,
         )
@@ -129,7 +128,13 @@ class participantState:
         elif "evo1" in self.next_step():
             approach = self.current_step().split("-")[0]
             subprocess.run(
-                ["git", "checkout", "-b",self.next_step(), f"{approach}-first_implementation"],
+                [
+                    "git",
+                    "checkout",
+                    "-b",
+                    self.next_step(),
+                    f"{approach}-first_implementation",
+                ],
                 stdin=subprocess.DEVNULL,
                 stdout=subprocess.DEVNULL,
             )
@@ -138,7 +143,7 @@ class participantState:
             subprocess.run(
                 ["git", "checkout", f"participant{self.participant_number}"],
                 stdin=subprocess.DEVNULL,
-                stdout=subprocess.DEVNULL
+                stdout=subprocess.DEVNULL,
             )
 
         if "set" in state.next_step():
@@ -147,12 +152,15 @@ class participantState:
             version_path = "start"
         # copying the openapi file of the next version
         shutil.copyfile(
-            os.path.join(script_dir, ".experiment/doc", version_path + ".yml"),
+            os.path.join(script_dir, ".experiment/docs", version_path + ".yml"),
             os.path.join(script_dir, "../openapi.yml"),
         )
         # starting the next version of the backend
         process = subprocess.Popen(
-            ["java", "-jar", f"{script_dir}/.experiment/apps/{version_path}.jar"], preexec_fn=os.setsid
+            ["java", "-jar", f"{script_dir}/.experiment/apps/{version_path}.jar"],
+            preexec_fn=os.setsid,
+            stdin=subprocess.DEVNULL,
+            stdout=subprocess.DEVNULL,
         )
         self.backend_pid = process.pid
 
@@ -173,7 +181,7 @@ class participantState:
 
 """
             )
-        sys.exit(10)
+            sys.exit(10)
 
     def print_state(self):
         logger.debug(self)
@@ -183,7 +191,12 @@ class participantState:
 # argument parsing
 parser = argparse.ArgumentParser(description="Description of your script")
 parser.add_argument("-s", "--set-participant-number", help="Number of the participant")
-parser.add_argument("-n", "--next-step", help="goes forward one step in the experiment")
+parser.add_argument(
+    "-n",
+    "--next-step",
+    help="goes forward one step in the experiment",
+    action="store_true",
+)
 
 
 args = parser.parse_args()
