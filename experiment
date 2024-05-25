@@ -71,7 +71,7 @@ class participantState:
             stdout=subprocess.DEVNULL,
         )
         process = subprocess.Popen(
-            ["java", "-jar", f"{script_dir}/apps/start.jar"],
+            ["java", "-jar", f"{script_dir}/.experiment/apps/start.jar"],
             preexec_fn=os.setsid,
             stdin=subprocess.DEVNULL,
             stdout=subprocess.DEVNULL,
@@ -152,7 +152,7 @@ class participantState:
         )
         # starting the next version of the backend
         process = subprocess.Popen(
-            ["java", "-jar", f"{script_dir}/apps/{version_path}.jar"], preexec_fn=os.setsid
+            ["java", "-jar", f"{script_dir}/.experiment/apps/{version_path}.jar"], preexec_fn=os.setsid
         )
         self.backend_pid = process.pid
 
