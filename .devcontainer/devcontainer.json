@@ -12,7 +12,7 @@
     }
   },
   "initializeCommand": {
-    "frontendInstall": "cd frontend && npm install"
+    "frontendInstall": "npm install"
   },
   "forwardPorts": [
     8080,

@@ -8,8 +8,7 @@ If you have done the tutorial, this should be straightforward, as the requiremen
 
 The two easiest ways are either **remotely**, in a GitHub CodeSpace via this [link](https://github.com/codespaces/new?template_repository=CharlyReux/evolvable-by-design-todomvc-frontend), with it, you will be able to start instantly (It is free, unless you go over 60 hours of runtime). Or **locally**, by using a Dev Container (you will need Docker, VS Code and the extension `ms-vscode-remote.remote-containers`). In either case, it should take a little bit of time to set up your environment.
 #### Using a Dev Container
-If using a Dev Container, in VS Code, you will first have to press F1 and run `Dev Containers: Clone Repository in Container Volume`  
-Enter the repository name `CharlyReux/evolvable-by-design-todomvc-frontend`  
+If using a Dev Container, in VS Code, you will first have to clone this repository, then press F1 and run `Dev Containers: Reopen in container`    
 The repository should load, and you are ready to go.
 
 
