@@ -18,10 +18,6 @@
     8080,
     5173
   ],
-  "appPort": [
-    8080,
-    5173
-  ],
   "portsAttributes": {
     "8080": {
       "label": "backend",
