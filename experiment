@@ -13,7 +13,11 @@ import subprocess
 import signal
 
 ################### CONSTANTS ########################
-std_subprocess = subprocess.STDOUT
+STD_SUBPROCESS = {
+    "stdin": subprocess.PIPE,
+    "stdout": subprocess.STDOUT,
+    "stderr": subprocess.PIPE,
+}
 
 ################### LOGGING SETUP ########################
 
@@ -70,14 +74,12 @@ class participantState:
         self.implems = get_implem(participant_number)
         subprocess.run(
             ["git", "checkout", "-b", f"participant{self.participant_number}"],
-            stdin=std_subprocess,
-            stdout=std_subprocess,
+            **STD_SUBPROCESS
         )
         process = subprocess.Popen(
             ["java", "-jar", f"{script_dir}/.experiment/apps/start.jar"],
             preexec_fn=os.setsid,
-            stdin=std_subprocess,
-            stdout=std_subprocess,
+            **STD_SUBPROCESS
         )
         self.backend_pid = process.pid
 
@@ -116,12 +118,11 @@ class participantState:
             logger.warning("No backend running, still advancing to next step")
 
         subprocess.run(
-            ["git", "add", "."], stdin=std_subprocess, stdout=std_subprocess
+            ["git", "add", "."], **STD_SUBPROCESS
         )
         subprocess.run(
             ["git", "commit", "-m", self.current_step()],
-            stdin=std_subprocess,
-            stdout=std_subprocess,
+            **STD_SUBPROCESS
         )
 
         ##if we have implemented a "first implementation", we tag the commit in order to get back to it when arriving in the second set
@@ -138,15 +139,13 @@ class participantState:
                     self.next_step(),
                     f"{approach}-first_implementation",
                 ],
-                stdin=std_subprocess,
-                stdout=std_subprocess,
+                **STD_SUBPROCESS
             )
         # if the next step is a first implementation, wee roll back the empty frontend implementation
         elif "first_implementation" in self.next_step():
             subprocess.run(
                 ["git", "checkout", f"participant{self.participant_number}"],
-                stdin=std_subprocess,
-                stdout=std_subprocess,
+                **STD_SUBPROCESS
             )
 
         if "set" in state.next_step():
@@ -162,8 +161,7 @@ class participantState:
         process = subprocess.Popen(
             ["java", "-jar", f"{script_dir}/.experiment/apps/{version_path}.jar"],
             preexec_fn=os.setsid,
-            stdin=std_subprocess,
-            stdout=std_subprocess,
+            **STD_SUBPROCESS,
         )
         self.backend_pid = process.pid
 
