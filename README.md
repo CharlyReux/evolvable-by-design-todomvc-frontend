@@ -44,7 +44,7 @@ At the beginning of the experiment, you were provided with a number from 1 to 8,
 
 When you are ready run the command:
 ```sh
-TODO make the script that create a branch and checks out the back <YOUR_NUMBER>
+./experiment -s <YOUR_NUMBER>
 ```
 
 The script assigned you a type of approach to start with, below are all the evolution, you can start by going to the corresponding approach and to follow the **First implementation** steps.
@@ -52,13 +52,19 @@ The script assigned you a type of approach to start with, below are all the evol
 > [!CAUTION]
 > In all the cases, the longer step is the first implementation, as you will have to get familiar with the application, and the approach(in the case of Pivo). Remember that a Documentation for Pivo that covers all the use-cases you will encounter is available [here]()TODO
 
+> [!NOTE]
+> The script that you will use does everything not relevant for you for the experiment. It automatically runs the backend version that you need to conform to in your frontend, and replaces the `openapi.yml` file situated in the root of the repository with the one that is relevant.  
+> The only thing that you will need to do is to run `npm run dev` in order to start developing, and access `http://localhost:5173`
+> If running this experiment in a github codeSpace **you will probably have to make the backend public in order to access it**(the same as with the tutorial) with `gh codespace ports visibility 3000:public -c $CODESPACE_NAME`
+
+
 #### Classical Approach
-To make things easier, you can check the swagger UI while coding(TODO specify how to access it) or the openApi specification directly(TODO provide the access to the file)  
+To make things easier, you can check the swagger UI while coding(An extension is provided in the devcontainer: `OpenAPI: show preview using Swagger UI`) or the openApi specification directly, which is in the root of the repository.  
 
 ##### First implementation
 1. Instantiate the service in the todolistpage
 2. Implement the methods in the TodoService
-3. Once done, run the following command: TODO `Add the command form the script` 
+3. Once done, run the following command: `./experiment -n` 
 
 ##### Set n°1 
 1. Add a required `dueDate` body parameter of type string to POST /todo.

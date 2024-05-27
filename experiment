@@ -12,6 +12,9 @@ import shutil
 import subprocess
 import signal
 
+################### CONSTANTS ########################
+std_subprocess = subprocess.STDOUT
+
 ################### LOGGING SETUP ########################
 
 
@@ -67,14 +70,14 @@ class participantState:
         self.implems = get_implem(participant_number)
         subprocess.run(
             ["git", "checkout", "-b", f"participant{self.participant_number}"],
-            stdin=subprocess.DEVNULL,
-            stdout=subprocess.DEVNULL,
+            stdin=std_subprocess,
+            stdout=std_subprocess,
         )
         process = subprocess.Popen(
             ["java", "-jar", f"{script_dir}/.experiment/apps/start.jar"],
             preexec_fn=os.setsid,
-            stdin=subprocess.DEVNULL,
-            stdout=subprocess.DEVNULL,
+            stdin=std_subprocess,
+            stdout=std_subprocess,
         )
         self.backend_pid = process.pid
 
@@ -113,12 +116,12 @@ class participantState:
             logger.warning("No backend running, still advancing to next step")
 
         subprocess.run(
-            ["git", "add", "."], stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL
+            ["git", "add", "."], stdin=std_subprocess, stdout=std_subprocess
         )
         subprocess.run(
             ["git", "commit", "-m", self.current_step()],
-            stdin=subprocess.DEVNULL,
-            stdout=subprocess.DEVNULL,
+            stdin=std_subprocess,
+            stdout=std_subprocess,
         )
 
         ##if we have implemented a "first implementation", we tag the commit in order to get back to it when arriving in the second set
@@ -135,15 +138,15 @@ class participantState:
                     self.next_step(),
                     f"{approach}-first_implementation",
                 ],
-                stdin=subprocess.DEVNULL,
-                stdout=subprocess.DEVNULL,
+                stdin=std_subprocess,
+                stdout=std_subprocess,
             )
         # if the next step is a first implementation, wee roll back the empty frontend implementation
         elif "first_implementation" in self.next_step():
             subprocess.run(
                 ["git", "checkout", f"participant{self.participant_number}"],
-                stdin=subprocess.DEVNULL,
-                stdout=subprocess.DEVNULL,
+                stdin=std_subprocess,
+                stdout=std_subprocess,
             )
 
         if "set" in state.next_step():
@@ -159,8 +162,8 @@ class participantState:
         process = subprocess.Popen(
             ["java", "-jar", f"{script_dir}/.experiment/apps/{version_path}.jar"],
             preexec_fn=os.setsid,
-            stdin=subprocess.DEVNULL,
-            stdout=subprocess.DEVNULL,
+            stdin=std_subprocess,
+            stdout=std_subprocess,
         )
         self.backend_pid = process.pid
 
@@ -183,8 +186,11 @@ class participantState:
             )
             sys.exit(10)
 
-    def print_state(self):
-        logger.debug(self)
+    def __str__(self) -> str:
+        return f"participant_number: {self.participant_number}, current_step: {self.current_step()}, next_step: {self.next_step()}"
+    
+    def __repr__(self) -> str:
+        return self.__str__()
 
 
 ################### SCRIPT ########################
@@ -223,7 +229,7 @@ if args.set_participant_number:
 
     logger.info("Participant number set: {}".format(args.set_participant_number))
 
-    logger.debug("Setting_up...")
+    logger.info("Setting_up...")
     state: participantState = participantState(args.set_participant_number)
 
     logger.info("The experiment now begins.")
@@ -231,7 +237,7 @@ if args.set_participant_number:
         "you will start with the {} approach".format(state.next_step().split("-")[0])
     )
     logger.info(
-        "Follow the instructions in the README of this repository, starting with the sub-section 'First Implementation' in the section of the {}".format(
+        "Follow the instructions in the README of this repository, starting with the sub-section 'First Implementation' in the section of the {} approach".format(
             state.next_step().split("-")[0]
         )
     )
@@ -258,5 +264,6 @@ if args.next_step:
         state.advance()
     else:
         logger.error("Input not recognized, cancelling")
-    state.print_state()  # debug TODO:remove
+    logger.debug(state)  # debug TODO:remove
+    logger.info("The experiment now continues, you will can now implement the {}".format(state.next_step()))
     state.save()
