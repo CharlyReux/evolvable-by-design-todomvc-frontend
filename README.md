@@ -54,7 +54,8 @@ The script assigned you a type of approach to start with, below are all the evol
 
 > [!NOTE]
 > The script that you will use does everything not relevant for you for the experiment. It automatically runs the backend version that you need to conform to in your frontend, and replaces the `openapi.yml` file situated in the root of the repository with the one that is relevant.  
-> The only thing that you will need to do is to run `npm run dev` in order to start developing, and access `http://localhost:5173`
+> The only thing that you will need to do is to run `npm run dev` in order to start developing, and access `http://localhost:5173`  
+> When you will get to the end of a set or an approach, your front-end will automatically reset either to your first implementation, or to the initial empty implementation.  
 > If running this experiment in a github codeSpace **you will probably have to make the backend public in order to access it**(the same as with the tutorial) with `gh codespace ports visibility 3000:public -c $CODESPACE_NAME`
 
 

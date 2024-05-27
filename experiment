@@ -74,13 +74,18 @@ class participantState:
         self.implems = get_implem(participant_number)
         subprocess.run(
             ["git", "checkout", "-b", f"participant{self.participant_number}"],
-            **STD_SUBPROCESS
+            **STD_SUBPROCESS,
         )
         process = subprocess.Popen(
             ["java", "-jar", f"{script_dir}/.experiment/apps/start.jar"],
             preexec_fn=os.setsid,
-            **STD_SUBPROCESS
+            **STD_SUBPROCESS,
         )
+        shutil.copyfile(
+            os.path.join(script_dir, ".experiment/docs", "start.yml"),
+            os.path.join(script_dir, "./openapi.yml"),
+        )
+        self.steps[self.implems[self.cur_step]] = time.time()
         self.backend_pid = process.pid
 
     def save(self):
@@ -95,10 +100,15 @@ class participantState:
         self.cur_step -= 1  # only for debuging purposes
 
     def advance(self):
+        # updating the step
+        self.cur_step += 1
+        self.steps[self.implems[self.cur_step]] = time.time()
         # checking if this is the end of the experiment
         if not self.next_step():
             with open(script_dir + "/experiment-data.json", "w", encoding="utf-8") as f:
-                json.dump(self, f, ensure_ascii=False, indent=4)
+                json.dump(
+                    self, f, ensure_ascii=False, default=lambda o: o.__dict__, indent=4
+                )
             logger.info(
                 "End of the experiment, Your experiment report has been generated at "
                 + script_dir
@@ -107,23 +117,14 @@ class participantState:
             logger.info("please send it to charly.reux@inria.fr")
             logger.info("Thanks for participating!")
             sys.exit(0)
-
-        # updating the step
-        self.cur_step += 1
-        self.steps[self.implems[self.cur_step]] = time.time()
         # stopping the backend implementation
         try:
             os.kill(self.backend_pid, signal.SIGTERM)
         except:
             logger.warning("No backend running, still advancing to next step")
 
-        subprocess.run(
-            ["git", "add", "."], **STD_SUBPROCESS
-        )
-        subprocess.run(
-            ["git", "commit", "-m", self.current_step()],
-            **STD_SUBPROCESS
-        )
+        subprocess.run(["git", "add", "."], **STD_SUBPROCESS)
+        subprocess.run(["git", "commit", "-m", self.current_step()], **STD_SUBPROCESS)
 
         ##if we have implemented a "first implementation", we tag the commit in order to get back to it when arriving in the second set
         if "first_implementation" in self.current_step():
@@ -139,13 +140,19 @@ class participantState:
                     self.next_step(),
                     f"{approach}-first_implementation",
                 ],
-                **STD_SUBPROCESS
+                **STD_SUBPROCESS,
             )
-        # if the next step is a first implementation, wee roll back the empty frontend implementation
+        # if the next step is a first implementation, we roll back to the empty frontend implementation
         elif "first_implementation" in self.next_step():
             subprocess.run(
-                ["git", "checkout", f"participant{self.participant_number}"],
-                **STD_SUBPROCESS
+                [
+                    "git",
+                    "checkout",
+                    "-b",
+                    f"participant{self.participant_number}-second_impl",
+                    "experiment-start",
+                ],
+                **STD_SUBPROCESS,
             )
 
         if "set" in state.next_step():
@@ -155,7 +162,7 @@ class participantState:
         # copying the openapi file of the next version
         shutil.copyfile(
             os.path.join(script_dir, ".experiment/docs", version_path + ".yml"),
-            os.path.join(script_dir, "../openapi.yml"),
+            os.path.join(script_dir, "./openapi.yml"),
         )
         # starting the next version of the backend
         process = subprocess.Popen(
@@ -186,7 +193,7 @@ class participantState:
 
     def __str__(self) -> str:
         return f"participant_number: {self.participant_number}, current_step: {self.current_step()}, next_step: {self.next_step()}"
-    
+
     def __repr__(self) -> str:
         return self.__str__()
 
@@ -263,5 +270,9 @@ if args.next_step:
     else:
         logger.error("Input not recognized, cancelling")
     logger.debug(state)  # debug TODO:remove
-    logger.info("The experiment now continues, you will can now implement the {}".format(state.next_step()))
+    logger.info(
+        "The experiment now continues, you can now implement the {}".format(
+            state.next_step()
+        )
+    )
     state.save()
