@@ -85,6 +85,9 @@ To make things easier, you can check the swagger UI while coding(An extension is
 
 #### Pivo Approach
 
+>![WARNING] 
+>In order to simplify the usage of pivo, you can replace the content of the content of the todoService with the content in [todoServicePivo](src/utils/TodoServicePivo.md), which adds type hinting.
+
 ##### First implementation
 1. Instantiate the service in the TodolistPage(You will have to modify The todoService and the TodoList component, you can get inspiration from the [tutorial](https://github.com/CharlyReux/evolvable-by-design-tutorial/blob/main/tutorial.md#setting-up-pivo-in-our-application) we did earlier)
 2. Modify the TodoList component to use semantic data(You can use the utility component `with-semantic-data-required.jsx`)
