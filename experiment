@@ -120,6 +120,7 @@ class participantState:
         # stopping the backend implementation
         try:
             os.kill(self.backend_pid, signal.SIGTERM)
+            logger.info("former version of the backend has been stopped.")
         except:
             logger.warning("No backend running, still advancing to next step")
 
@@ -164,12 +165,16 @@ class participantState:
             os.path.join(script_dir, ".experiment/docs", version_path + ".yml"),
             os.path.join(script_dir, "./openapi.yml"),
         )
+        logger.info("The new version of the openapi specification file is available at the root of the project at openapi.yml")
+
         # starting the next version of the backend
         process = subprocess.Popen(
             ["java", "-jar", f"{script_dir}/.experiment/apps/{version_path}.jar"],
             preexec_fn=os.setsid,
             **STD_SUBPROCESS,
         )
+        logger.info("New version of the backend has started, with pid: "+str(process.pid))
+
         self.backend_pid = process.pid
 
     def current_step(self) -> str:
