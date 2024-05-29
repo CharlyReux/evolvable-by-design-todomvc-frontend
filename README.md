@@ -50,7 +50,7 @@ When you are ready run the command:
 The script assigned you a type of approach to start with, below are all the evolution, you can start by going to the corresponding approach and to follow the **First implementation** steps.
 
 > [!CAUTION]
-> In all the cases, the longer step is the first implementation, as you will have to get familiar with the application, and the approach(in the case of Pivo). Remember that a Documentation for Pivo that covers all the use-cases you will encounter is available [here]()TODO
+> In all the cases, the longer step is the first implementation, as you will have to get familiar with the application, and the approach(in the case of Pivo). Remember that a Documentation for Pivo that covers all the use-cases you will encounter is available [here](https://github.com/CharlyReux/evolvable-by-design-research/blob/master/experiments/crossover-developers-study/Pivo-documentation.md)
 
 > [!NOTE]
 > The script that you will use does everything not relevant for you for the experiment. It automatically runs the backend version that you need to conform to in your frontend, and replaces the `openapi.yml` file situated in the root of the repository with the one that is relevant.  
@@ -89,7 +89,7 @@ To make things easier, you can check the swagger UI while coding(An extension is
 >In order to simplify the usage of pivo, you can replace the content of the content of the todoService with the content in [todoServicePivo](src/utils/TodoServicePivo.md), which adds type hinting.
 
 ##### First implementation
-1. Instantiate the service in the TodolistPage(You will have to modify The todoService and the TodoList component, you can get inspiration from the [tutorial](https://github.com/CharlyReux/evolvable-by-design-tutorial/blob/main/tutorial.md#setting-up-pivo-in-our-application) we did earlier)
+1. Instantiate the service in the TodolistPage(You will have to modify The todoService and the TodoList component, you can get inspiration from the [tutorial](https://github.com/CharlyReux/evolvable-by-design-tutorial/blob/main/tutorial.md#setting-up-pivo-in-our-application) we did earlier), note that the openAPI specification is available at /rest with the OPTIONS http verb.
 2. Modify the TodoList component to use semantic data(You can use the utility component `with-semantic-data-required.jsx`)
 3. Implement the methods in the TodoService (you will have to modify the switchTodoStatus method as well)
 4. Once done, run the following command: TODO `Add the command for the script` 
