@@ -89,7 +89,7 @@ To make things easier, you can check the swagger UI while coding(An extension is
 >In order to simplify the usage of pivo, you can replace the content of the content of the todoService with the content in [todoServicePivo](src/utils/TodoServicePivo.md), which adds type hinting.
 
 ##### First implementation
-1. Instantiate the service in the TodolistPage(You will have to modify The todoService and the TodoList component, you can get inspiration from the [tutorial](https://github.com/CharlyReux/evolvable-by-design-tutorial/blob/main/tutorial.md#setting-up-pivo-in-our-application) we did earlier), note that the openAPI specification is available at /rest with the OPTIONS http verb.
+1. Instantiate the service in the TodolistPage(You will have to modify The todoService and the TodoList component, you can get inspiration from the [tutorial](https://github.com/CharlyReux/evolvable-by-design-tutorial/tree/main#setting-up-pivo-in-our-application) we did earlier), note that the openAPI specification is available at /rest with the OPTIONS http verb.
 2. Modify the TodoList component to use semantic data(You can use the utility component `with-semantic-data-required.jsx`)
 3. Implement the methods in the TodoService (you will have to modify the switchTodoStatus method as well)
 4. Once done, run the following command: TODO `Add the command for the script` 
