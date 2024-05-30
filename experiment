@@ -15,7 +15,7 @@ import signal
 ################### CONSTANTS ########################
 STD_SUBPROCESS = {
     "stdin": subprocess.PIPE,
-    "stdout": None,
+    "stdout": subprocess.PIPE,
     "stderr": subprocess.PIPE,
 }
 
