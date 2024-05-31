@@ -177,6 +177,28 @@ class participantState:
 
         self.backend_pid = process.pid
 
+    def restart_backend(self):
+        try:
+            os.kill(self.backend_pid, signal.SIGTERM)
+            logger.info("former version of the backend has been stopped.")
+        except:
+            logger.warning("No backend running, restarting it")
+            
+        if "set" in state.next_step():
+            version_path = self.next_step().split("-")[1]
+        else:
+            version_path = "start"
+        # restarting the version of the backend
+        process = subprocess.Popen(
+            ["java", "-jar", f"{script_dir}/.experiment/apps/{version_path}.jar"],
+            preexec_fn=os.setsid,
+            **STD_SUBPROCESS,
+        )
+        logger.info("The backend has been restarted, with pid: "+str(process.pid))
+
+        self.backend_pid = process.pid
+        
+
     def current_step(self) -> str:
         return self.implems[self.cur_step]
 
@@ -213,7 +235,11 @@ parser.add_argument(
     help="goes forward one step in the experiment",
     action="store_true",
 )
-
+parser.add_argument(
+    "-r",
+    "--restart-backend",
+    help="restarts the backend",
+)
 
 args = parser.parse_args()
 
@@ -281,3 +307,9 @@ if args.next_step:
         )
     )
     state.save()
+    sys.exit(0)
+
+if args.restart_backend:
+    state.restart_backend()
+    state.save()
+    sys.exit(0)

@@ -59,6 +59,13 @@ The script assigned you a type of approach to start with, below are all the evol
 > If running this experiment in a github codeSpace **you will probably have to make the backend public in order to access it**(the same as with the tutorial) with `gh codespace ports visibility 3000:public -c $CODESPACE_NAME`
 
 
+> [!WARNING]
+> If you ever notice that the backend stopped, either because your codespace restarted, or because of an unknown error, you can restart it with the command:
+> ```sh
+>  ./experiment -r
+>```
+
+
 #### Classical Approach
 To make things easier, you can check the swagger UI while coding(An extension is provided in the devcontainer: `OpenAPI: show preview using Swagger UI`) or the openApi specification directly, which is in the root of the repository.  
 
