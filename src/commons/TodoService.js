@@ -127,25 +127,16 @@ export default class TodoService {
    * @returns a tuple with the author and the tag in the form [author, tag]
    */
   async getAuthorAndTag(todo) {
-    const authorOperation = todo
-    .getRelation("http://evolvable-by-design.github.io/vocabs/todomvc#rel/getAuthor")
+    const detailsOperation = todo
+    .getRelation("http://evolvable-by-design.github.io/vocabs/todomvc#rel/getDetails")
     .map(relation => {
       return relation[0].operation
-    }).getOrThrow(()=>new Error("no relation available to get an author"))
+    }).getOrThrow(()=>new Error("no relation available to update a todo"))
 
-    const authorResponse = (await authorOperation.invoke()).data
+    const detailsResponse = (await detailsOperation.invoke()).data
 
-    const tagOperation = todo
-    .getRelation("http://evolvable-by-design.github.io/vocabs/todomvc#rel/getTag")
-    .map(relation => {
-      return relation[0].operation
-    }).getOrThrow(()=>new Error("no relation available to get a tag"))
-
-    const tagResponse = (await tagOperation.invoke()).data
-
-    console.log(tagResponse)
     
-    return [await authorResponse.getOneValue("http://schema.org/givenName"),await tagResponse.getOneValue("http://schema.org/DefinedTerm")]
+    return [await detailsResponse.getOneValue("http://schema.org/givenName"),await detailsResponse.getOneValue("http://schema.org/DefinedTerm")]
   }
 
 
