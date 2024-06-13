@@ -317,10 +317,10 @@ components:
           minLength: 1
           x-@id: http://schema.org/name
         dueDate:
-          x-@id: http://schema.org/DateTime
           type: string
           description: The due date of the todo in the format CCYY-MM-DDThh:mm:ssZ
           format: date-time
+          x-@id: http://schema.org/DateTime
         authorName:
           type: string
           minLength: 1
@@ -332,11 +332,6 @@ components:
     Infos:
       type: object
       properties:
-        dueDate:
-          type: string
-          description: The due date of the todo in the format CCYY-MM-DDThh:mm:ssZ
-          format: date-time
-          x-@id: http://schema.org/DateTime
         completed:
           type: boolean
           x-@id: http://evolvable-by-design.github.io/vocabs/todomvc#completed
@@ -344,6 +339,7 @@ components:
       type: object
       required:
         - title
+        - completed
       properties:
         title:
           type: string
