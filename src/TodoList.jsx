@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 
 import List from '@mui/material/List';
@@ -16,28 +16,28 @@ import RemoveDoneIcon from '@mui/icons-material/RemoveDone';
 import Tooltip from '@mui/material/Tooltip';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Typography from '@mui/material/Typography';
+import InfoIcon from '@mui/icons-material/Info';
+import WithSemanticDataRequired from './commons/with-semantic-data-required'
 
 
 import TodoInput from './TodoInput'
+import { ListItemButton, ListItemIcon } from '@mui/material';
 import DetailDialog from './DetailDialog';
-import { ListItemIcon } from '@mui/material';
-import InfoIcon from '@mui/icons-material/Info';
 
 export default function TodoListComponent({
   todos,
   createTodo,
   deleteTodo,
   clearTodos,
-  getAuthorAndTag,
   switchTodoCompletedStatus,
+  getAuthorAndTag,
   filter
 }) {
-  const navigate = useNavigate();
-
   const [open, setOpen] = useState(false);
   const [selectedTodo, setSelectedTodo] = useState(null);
   const [selectedTodoTitle, setSelectedTodoTitle] = useState(null);
 
+  const navigate = useNavigate();
   const hash = (object) => {
     return JSON.stringify(object)
   }
@@ -48,8 +48,6 @@ export default function TodoListComponent({
     setOpen(true);
   }
 
-
-
   return (
     <>
       <header className='header'>
@@ -58,39 +56,53 @@ export default function TodoListComponent({
       </header>
 
       <List sx={{ width: '100%' }}>
-      {todos.map((todo) => (
-          <ListItem
+        {todos.map((todo) => (
+          <WithSemanticDataRequired
             key={hash(todo)}
-            secondaryAction={
-              <div>
-                <IconButton edge="end" aria-label="delete" onClick={() => deleteTodo(todo)}>
-                  <DeleteIcon />
-                </IconButton>
-                <IconButton edge="end" aria-label="complete" onClick={() => switchTodoCompletedStatus(todo)}>
-                  {todo.completed ?
-                    <CheckBoxIcon />
-                    :
-                    <CheckBoxOutlineBlankIcon />
-                  }
-                </IconButton>
-              </div>
-            }
+            data={todo}
+            mappings={{
+              id: "http://evolvable-by-design.github.io/vocabs/todomvc#todoId",
+              title: "http://schema.org/name",
+              completed: "http://evolvable-by-design.github.io/vocabs/todomvc#completed",
+              dueDate: "http://schema.org/DateTime"
+            }}
+            loader={<div>Loading...</div>}>
 
-          >
-            <ListItemIcon>
-              <IconButton onClick={handleOpen(todo, todo.title)}>
-                <InfoIcon />
-              </IconButton>
-            </ListItemIcon>
-            <ListItemText disableTypography
-              id={todo.id} primary={
-                <Typography className={todo.completed ? 'text-strike' : null}>{todo.title}</Typography>
-              } />
-              <ListItemText disableTypography
-              id={todo.id} primary={
-                <Typography className="date"> {todo.dueDate} </Typography>
-              } />
-          </ListItem>
+            {({ id, title, completed,dueDate }) => (
+              <ListItem
+                key={id}
+                secondaryAction={
+                  <div>
+                    <IconButton edge="end" aria-label="delete" onClick={() => deleteTodo(todo)}>
+                      <DeleteIcon />
+                    </IconButton>
+                    <IconButton edge="end" aria-label="complete" onClick={() => switchTodoCompletedStatus(todo)}>
+                      {completed ?
+                        <CheckBoxIcon />
+                        :
+                        <CheckBoxOutlineBlankIcon />
+                      }
+                    </IconButton>
+                  </div>
+                }
+
+              >
+                <ListItemIcon>
+                  <IconButton onClick={handleOpen(todo, title)}>
+                    <InfoIcon />
+                  </IconButton>
+                </ListItemIcon>
+                <ListItemText disableTypography
+                  id={id} primary={
+                    <Typography className={completed ? 'text-strike' : null}>{title}</Typography>
+                  } />
+                <ListItemText disableTypography
+                  id={id} primary={
+                    <Typography className="date">{dueDate ? dueDate : "No dueDate"}</Typography>
+                  } />
+              </ListItem>
+            )}
+          </WithSemanticDataRequired>
         ))}
       </List>
 
@@ -105,15 +117,14 @@ export default function TodoListComponent({
           <BottomNavigationAction value="active" label="Active" icon={<Unpublished />} />
           <BottomNavigationAction value="completed" label="Completed" icon={<CheckCircle />} />
         </BottomNavigation>
-        <Tooltip title="Remove all todos in the current category">
+        <Tooltip title="Remove all todos in that category">
           <IconButton variant="contained" onClick={() => clearTodos(filter)}>
             <RemoveDoneIcon />
           </IconButton>
         </Tooltip>
       </div>
-
       <DetailDialog todo={selectedTodo} title={selectedTodoTitle} open={open} onClose={() => setOpen(false)} getAuthorAndTag={getAuthorAndTag} />
-    </>
 
+    </>
   )
 }
