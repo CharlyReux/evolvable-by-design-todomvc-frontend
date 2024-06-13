@@ -92,10 +92,8 @@ paths:
               $ref: '#/components/links/delete'
             listAll:
               $ref: '#/components/links/listAll'
-            getAuthor:
-              $ref: '#/components/links/getAuthor'
-            getTag:
-              $ref: '#/components/links/getTag'
+            getDetails:
+              $ref: '#/components/links/getDetails'
         '400':
           description: Bad request
           content:
@@ -132,10 +130,8 @@ paths:
               $ref: '#/components/links/delete'
             listAll:
               $ref: '#/components/links/listAll'
-            getAuthor:
-              $ref: '#/components/links/getAuthor'
-            getTag:
-              $ref: '#/components/links/getTag'
+            getDetails:
+              $ref: '#/components/links/getDetails'
     put:
       summary: Update an existing todo
       operationId: updateTodo
@@ -161,10 +157,8 @@ paths:
               $ref: '#/components/links/delete'
             listAll:
               $ref: '#/components/links/listAll'
-            getAuthor:
-              $ref: '#/components/links/getAuthor'
-            getTag:
-              $ref: '#/components/links/getTag'
+            getDetails:
+              $ref: '#/components/links/getDetails'
     delete:
       summary: Delete the todo
       operationId: deleteTodoById
@@ -178,7 +172,7 @@ paths:
             listAll:
               operationId: listTodos
               x-@relation: http://evolvable-by-design.github.io/vocabs/todomvc#rel/listAll
-  /todo/{id}/author:
+  /todo/{id}/details:
     parameters:
     - name: id
       in: path
@@ -189,41 +183,18 @@ paths:
           - http://evolvable-by-design.github.io/vocabs/todomvc#todoId
           - '@id'
     get:
-      summary: Gets an author by his todoId
-      x-@id: http://evolvable-by-design.github.io/vocabs/todomvc#getAuthor
-      operationId: getAuthor
+      summary: Gets deailsof a todo from its id
+      x-@id: http://evolvable-by-design.github.io/vocabs/todomvc#getDetails
+      operationId: getDetails
       tags:
         - author
       responses:
         '200':
-          description: The author
+          description: The details
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Author'     
-  /todo/{id}/tag:
-    parameters:
-    - name: id
-      in: path
-      required: true
-      schema:
-        type: string
-        x-@id:
-          - http://evolvable-by-design.github.io/vocabs/todomvc#todoId
-          - '@id'
-    get:
-      summary: Gets an author by his todoId
-      x-@id: http://evolvable-by-design.github.io/vocabs/todomvc#getTag
-      operationId: getTag
-      tags:
-        - tag
-      responses:
-        '200':
-          description: The tag
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Tag'     
+                $ref: '#/components/schemas/Details'     
         
 components:
   parameters:
@@ -282,23 +253,9 @@ components:
         completed:
           type: boolean
           x-@id: http://evolvable-by-design.github.io/vocabs/todomvc#completed
-    Tag:
-      x-@type: http://evolvable-by-design.github.io/vocabs/todomvc#tag
-      x-@id: http://evolvable-by-design.github.io/vocabs/todomvc#tag
-      type: object
-      properties:
-        todoId:
-          type: string
-          x-@id:
-            - http://evolvable-by-design.github.io/vocabs/todomvc#todoId
-            - '@id'
-        tagName:
-          type: string
-          minLength: 1
-          x-@id: http://schema.org/DefinedTerm
-    Author:
-      x-@type: http://evolvable-by-design.github.io/vocabs/todomvc#Author
-      x-@id: http://evolvable-by-design.github.io/vocabs/todomvc#Author
+    Details:
+      x-@type: http://evolvable-by-design.github.io/vocabs/todomvc#Details
+      x-@id: http://evolvable-by-design.github.io/vocabs/todomvc#Details
       type: object
       properties:
         todoId:
@@ -310,22 +267,19 @@ components:
           type: string
           minLength: 1
           x-@id: http://schema.org/givenName
+        tagName:
+          type: string
+          minLength: 1
+          x-@id: http://schema.org/DefinedTerm
     TodoCreationRequest:
       type: object
       required:
-        - text
-        - authorName
-        - tagName
+        - title
       properties:
         text:
           type: string
           minLength: 1
           x-@id: http://schema.org/name
-        dueDate:
-          type: string
-          description: The due date of the todo in the format CCYY-MM-DDThh:mm:ssZ
-          format: date-time # todo test that
-          x-@id: http://schema.org/DateTime
         authorName:
           type: string
           minLength: 1
@@ -337,7 +291,6 @@ components:
     TodoUpdateRequest:
       type: object
       required:
-        - title
         - completed
       properties:
         text:
@@ -371,16 +324,12 @@ components:
         listAll:
           operationId: listTodos
           x-@relation: http://evolvable-by-design.github.io/vocabs/todomvc#rel/listAll
-        getAuthor:
-          operationId: getAuthor
-          x-@relation: http://evolvable-by-design.github.io/vocabs/todomvc#rel/getAuthor
+        getDetails:
+          operationId: getDetails
+          x-@relation: http://evolvable-by-design.github.io/vocabs/todomvc#rel/getDetails
           parameters:
             id: $response.body#/id
-        getTag:
-          operationId: getTag
-          x-@relation: http://evolvable-by-design.github.io/vocabs/todomvc#rel/getTag
-          parameters:
-            id: $response.body#/id
+
         createTodo:
           operationId: createTodo
           x-@relation: http://evolvable-by-design.github.io/vocabs/todomvc#rel/create
