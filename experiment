@@ -239,6 +239,7 @@ parser.add_argument(
     "-r",
     "--restart-backend",
     help="restarts the backend",
+    action="store_true",
 )
 
 args = parser.parse_args()
