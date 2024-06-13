@@ -10,31 +10,6 @@ servers:
     description: local server
 paths:
   /todos:
-    delete:
-      summary: >-
-        Delete the todos with the selected status, by default the completed
-        todos
-      operationId: deleteTodosByStatus
-      x-@id: http://evolvable-by-design.github.io/vocabs/todomvc#deleteManyTodos
-      tags:
-        - todo
-      parameters:
-        - name: status
-          in: query
-          description: The status expected for the queried todos
-          x-@id: http://evolvable-by-design.github.io/vocabs/todomvc#status
-          required: false
-          schema:
-            type: string
-            enum:
-              - all
-              - completed
-              - active
-            default: completed
-      responses:
-        '204':
-          description: Confirmation
-  /todo:
     get:
       summary: Get all the todos
       operationId: listTodos
@@ -66,6 +41,31 @@ paths:
               $ref: '#/components/links/createTodo'
             deleteMany:
               $ref: '#/components/links/deleteMany'
+    delete:
+      summary: >-
+        Delete the todos with the selected status, by default the completed
+        todos
+      operationId: deleteTodosByStatus
+      x-@id: http://evolvable-by-design.github.io/vocabs/todomvc#deleteManyTodos
+      tags:
+        - todo
+      parameters:
+        - name: status
+          in: query
+          description: The status expected for the queried todos
+          x-@id: http://evolvable-by-design.github.io/vocabs/todomvc#status
+          required: false
+          schema:
+            type: string
+            enum:
+              - all
+              - completed
+              - active
+            default: completed
+      responses:
+        '204':
+          description: Confirmation
+  /todo:
     post:
       summary: Create a new todo
       operationId: createTodo
@@ -313,11 +313,9 @@ components:
     TodoCreationRequest:
       type: object
       required:
-        - text
-        - authorName
-        - tagName
+        - title
       properties:
-        text:
+        title:
           type: string
           minLength: 1
           x-@id: http://schema.org/name
@@ -340,7 +338,7 @@ components:
         - title
         - completed
       properties:
-        text:
+        title:
           type: string
           minLength: 1
           x-@id: http://schema.org/name
@@ -361,7 +359,7 @@ components:
           x-@relation: http://evolvable-by-design.github.io/vocabs/todomvc#rel/update
           parameters:
             id: $response.body#/id
-            text: $response.body#/title
+            title: $response.body#/title
             completed: $response.body#/completed
         delete:
           operationId: deleteTodoById
@@ -387,4 +385,3 @@ components:
         deleteMany:
           operationId: deleteTodosByStatus
           x-@relation: http://evolvable-by-design.github.io/vocabs/todomvc#rel/deleteMany
-          
