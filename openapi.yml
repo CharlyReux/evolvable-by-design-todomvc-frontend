@@ -313,16 +313,18 @@ components:
     TodoCreationRequest:
       type: object
       required:
-        - title
+        - text
+        - authorName
+        - tagName
       properties:
-        title:
+        text:
           type: string
           minLength: 1
           x-@id: http://schema.org/name
         dueDate:
           type: string
           description: The due date of the todo in the format CCYY-MM-DDThh:mm:ssZ
-          format: date-time 
+          format: date-time # todo test that
           x-@id: http://schema.org/DateTime
         authorName:
           type: string
@@ -338,7 +340,7 @@ components:
         - title
         - completed
       properties:
-        title:
+        text:
           type: string
           minLength: 1
           x-@id: http://schema.org/name
@@ -359,7 +361,7 @@ components:
           x-@relation: http://evolvable-by-design.github.io/vocabs/todomvc#rel/update
           parameters:
             id: $response.body#/id
-            title: $response.body#/title
+            text: $response.body#/title
             completed: $response.body#/completed
         delete:
           operationId: deleteTodoById
