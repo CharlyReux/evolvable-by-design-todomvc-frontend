@@ -385,4 +385,3 @@ components:
         deleteMany:
           operationId: deleteTodosByStatus
           x-@relation: http://evolvable-by-design.github.io/vocabs/todomvc#rel/deleteMany
-          
