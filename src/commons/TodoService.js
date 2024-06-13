@@ -55,6 +55,8 @@ export default class TodoService {
     })
     .getOrThrow(()=>new Error("no relation available to create a todo"))
     await creationOperation.invoke({ ["http://schema.org/name"]: title ,["http://schema.org/givenName"]:author,["http://schema.org/DefinedTerm"]:tag})
+    
+    console.log(this.todos)
     return this.fetch(this.filter)
     //TODO create the method to add a todo
   }

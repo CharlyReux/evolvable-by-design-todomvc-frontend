@@ -76,7 +76,7 @@ export default function TodoListComponent({
             loader={<div>Loading...</div>}>
             {({ title, completed, dueDate,id}) => (
               <ListItem
-                key={hash(todo)}
+               
                 secondaryAction={
                   <div>
                     <IconButton edge="end" aria-label="delete" onClick={() => deleteTodo(todo)}>
