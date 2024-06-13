@@ -24,6 +24,7 @@ export default class TodoService {
   }
 
   getTodos() {
+    console.log(this.todos)
     return this.todos
   }
 
