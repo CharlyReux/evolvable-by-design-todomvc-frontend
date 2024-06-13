@@ -2,14 +2,16 @@ import React, { useMemo, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { useNavigate } from 'react-router-dom'
 
-import API_URL from './config'
+import API_URL, * as Config from './config'
 import TodoList from './TodoList'
 import TodoService from './commons/TodoService'
 
 export default function TodoListPage() {
   const [todoService, setTodoService] = useState()
   useEffect(() => {
-        //TODO: Instantiate the todoService. Note: the api_url is available in the config file
+    TodoService.forApiAtUrl(API_URL).then(setTodoService)
+
+        //TODO instantiate the todoService
   }, [])
 
   return (

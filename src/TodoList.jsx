@@ -23,6 +23,10 @@ import DetailDialog from './DetailDialog';
 import { ListItemIcon } from '@mui/material';
 import InfoIcon from '@mui/icons-material/Info';
 
+
+import WithSemanticDataRequired from "./commons/with-semantic-data-required"
+
+
 export default function TodoListComponent({
   todos,
   createTodo,
@@ -58,39 +62,53 @@ export default function TodoListComponent({
       </header>
 
       <List sx={{ width: '100%' }}>
-      {todos.map((todo) => (
-          <ListItem
-            key={hash(todo)}
-            secondaryAction={
-              <div>
-                <IconButton edge="end" aria-label="delete" onClick={() => deleteTodo(todo)}>
-                  <DeleteIcon />
-                </IconButton>
-                <IconButton edge="end" aria-label="complete" onClick={() => switchTodoCompletedStatus(todo)}>
-                  {todo.completed ?
-                    <CheckBoxIcon />
-                    :
-                    <CheckBoxOutlineBlankIcon />
-                  }
-                </IconButton>
-              </div>
-            }
+        {todos.map((todo) => (
 
-          >
-            <ListItemIcon>
-              <IconButton onClick={handleOpen(todo, todo.title)}>
-                <InfoIcon />
-              </IconButton>
-            </ListItemIcon>
-            <ListItemText disableTypography
-              id={todo.id} primary={
-                <Typography className={todo.completed ? 'text-strike' : null}>{todo.title}</Typography>
-              } />
-              <ListItemText disableTypography
-              id={todo.id} primary={
-                <Typography className="date"> {todo.dueDate} </Typography>
-              } />
-          </ListItem>
+          <WithSemanticDataRequired
+            data={todo}
+            key={hash(todo)}
+            mappings={{
+              title: "http://schema.org/name",
+              completed: "http://evolvable-by-design.github.io/vocabs/todomvc#completed",
+              dueDate: "http://schema.org/DateTime",
+              id:"http://evolvable-by-design.github.io/vocabs/todomvc#todoId"
+            }}
+            loader={<div>Loading...</div>}>
+            {({ title, completed, dueDate,id}) => (
+              <ListItem
+                key={hash(todo)}
+                secondaryAction={
+                  <div>
+                    <IconButton edge="end" aria-label="delete" onClick={() => deleteTodo(todo)}>
+                      <DeleteIcon />
+                    </IconButton>
+                    <IconButton edge="end" aria-label="complete" onClick={() => switchTodoCompletedStatus(todo)}>
+                      {completed ?
+                        <CheckBoxIcon />
+                        :
+                        <CheckBoxOutlineBlankIcon />
+                      }
+                    </IconButton>
+                  </div>
+                }
+
+              >
+                <ListItemIcon>
+                  <IconButton onClick={handleOpen(todo, title)}>
+                    <InfoIcon />
+                  </IconButton>
+                </ListItemIcon>
+                <ListItemText disableTypography
+                  id={id} primary={
+                    <Typography className={completed ? 'text-strike' : null}>{title}</Typography>
+                  } />
+                <ListItemText disableTypography
+                  id={id} primary={
+                    <Typography className="date"> {dueDate} </Typography>
+                  } />
+              </ListItem>
+            )}
+          </WithSemanticDataRequired>
         ))}
       </List>
 
@@ -105,10 +123,13 @@ export default function TodoListComponent({
           <BottomNavigationAction value="active" label="Active" icon={<Unpublished />} />
           <BottomNavigationAction value="completed" label="Completed" icon={<CheckCircle />} />
         </BottomNavigation>
-        <Tooltip title="Remove all todos in the current category">
+        <Tooltip title="Remove all completed todos">
+          
+          {filter == "completed"?          
           <IconButton variant="contained" onClick={() => clearTodos(filter)}>
             <RemoveDoneIcon />
-          </IconButton>
+          </IconButton>:<></>}
+
         </Tooltip>
       </div>
 
