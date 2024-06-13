@@ -128,16 +128,22 @@ export default class TodoService {
    * @returns a tuple with the author and the tag in the form [author, tag]
    */
   async getAuthorAndTag(todo) {
-    const detailsOperation = todo
-    .getRelation("http://evolvable-by-design.github.io/vocabs/todomvc#rel/getDetails")
-    .map(relation => {
-      return relation[0].operation
-    }).getOrThrow(()=>new Error("no relation available to update a todo"))
+    const authorOperation = todo
+    .getRelation("http://evolvable-by-design.github.io/vocabs/todomvc#rel/getAuthor",1)
+    .map(relation => relation.operation)
+    .getOrThrow(() => new Error('REST API operation not available'))
+    const authorResponse = await authorOperation.invoke()
+    const authorResource = authorResponse.data
+    const author = await authorResource.getOne("http://schema.org/givenName")
 
-    const detailsResponse = (await detailsOperation.invoke()).data
-
-    
-    return [await detailsResponse.getOneValue("http://schema.org/givenName"),await detailsResponse.getOneValue("http://schema.org/DefinedTerm")]
+    const tagOperation = todo
+    .getRelation("http://evolvable-by-design.github.io/vocabs/todomvc#rel/getTag",1)
+    .map(relation => relation.operation)
+    .getOrThrow(() => new Error('REST API operation not available'))
+    const tagResponse = await tagOperation.invoke()
+    const tagResource = tagResponse.data
+    const tag = await tagResource.getOne("http://schema.org/DefinedTerm")
+    return [author.data,tag.data]
   }
 
 
