@@ -8,7 +8,10 @@ export default class TodoService {
    */
   constructor(baseApiUrl) {
     this.todos = []
-    this.baseApiUrl = baseApiUrl
+    this.todos = []
+    //TODO
+    //- Instantiate a pivo object
+    //- Retrieve the todo collection Operation
   }
 
   getTodos() {
@@ -22,6 +25,10 @@ export default class TodoService {
    */
   async fetch(filter){
     //TODO fetch todos from the server
+    // - invoke the todo collection Operation with the filter as a parameter, to get a response object
+    // - Get the array of todos from the response object
+    // - Assign the todos
+    // - return getTodos()
   }
   /**
    * @param {string} title : the title of the todo to add
@@ -31,6 +38,9 @@ export default class TodoService {
    */
   async add(title, author, tag) {
     //TODO create the method to add a todo
+    // - Get the creation Operation from the relation in the the response from the todo Collection operation
+    // - Invoke the creation operation with the appropriate parameters
+    // - Update all the todos just by returning the fetch method (It is the easier way, even tho it makes another request)
   }
 
   /**
